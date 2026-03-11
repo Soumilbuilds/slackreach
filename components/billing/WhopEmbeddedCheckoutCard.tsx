@@ -42,7 +42,7 @@ export default function WhopEmbeddedCheckoutCard({
   }, []);
 
   const handleSubmit = async () => {
-    if (!controlsRef.current || embedState !== "ready" || isSubmitting) {
+    if (!controlsRef.current || embedState === "loading" || isSubmitting) {
       return;
     }
 
@@ -61,17 +61,16 @@ export default function WhopEmbeddedCheckoutCard({
     }
   };
 
-  const footerMessage =
-    errorMessage ||
-    (embedState === "loading"
-      ? "Loading secure checkout..."
-      : embedState === "disabled"
-        ? "Complete the required fields in the checkout form to continue."
-        : "Your email is prefilled. No extra billing portal, no redirect loop.");
+  const buttonLabel =
+    isSubmitting
+      ? "Processing..."
+      : embedState === "loading"
+        ? "Loading checkout..."
+        : submitLabel;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
-      <div className="overflow-hidden rounded-t-xl bg-white">
+    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden bg-white">
         <WhopCheckoutEmbed
           ref={embedRef}
           sessionId={sessionId}
@@ -101,25 +100,21 @@ export default function WhopEmbeddedCheckoutCard({
         />
       </div>
 
-      <div className="border-t border-gray-200 bg-gray-50 px-4 py-4">
+      <div className="border-t border-gray-200 bg-white px-4 py-4">
         <button
           type="button"
           onClick={() => {
             void handleSubmit();
           }}
-          disabled={embedState !== "ready" || isSubmitting}
-          className="w-full rounded-md bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+          disabled={embedState === "loading" || isSubmitting}
+          className="h-11 w-full rounded-md bg-gray-900 px-4 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
         >
-          {isSubmitting ? "Processing..." : submitLabel}
+          {buttonLabel}
         </button>
 
-        <p
-          className={`mt-3 text-center text-xs ${
-            errorMessage ? "text-red-600" : "text-gray-500"
-          }`}
-        >
-          {footerMessage}
-        </p>
+        {errorMessage && (
+          <p className="mt-3 text-center text-xs text-red-600">{errorMessage}</p>
+        )}
       </div>
     </div>
   );
