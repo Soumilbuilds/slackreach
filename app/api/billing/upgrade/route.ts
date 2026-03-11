@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { requireApiUser } from "@/lib/auth";
 import { syncUserBillingState } from "@/lib/billing";
-import { getBillingPlan, isPlanConfigured, parsePlanKey } from "@/lib/plans";
+import { getCheckoutPlan, isPlanConfigured, parsePlanKey } from "@/lib/plans";
 import {
   buildBillingMetadata,
   chargeWhopMemberForPlan,
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const plan = getBillingPlan(planKey);
+  const plan = getCheckoutPlan(planKey, { allowStarterTrial: false });
   if (!isPlanConfigured(plan)) {
     return NextResponse.json(
       { error: `Whop plan is missing for ${plan.name}.` },

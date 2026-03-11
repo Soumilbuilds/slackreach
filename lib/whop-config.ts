@@ -7,6 +7,7 @@ export const APP_BASE_URL = process.env.APP_BASE_URL ?? "http://localhost:3000";
 
 export const WHOP_PRODUCT_ID = "prod_dykz42RsTpcMC";
 export const WHOP_PLAN_ID_STARTER = "plan_TIrQGsxQD2IWT";
+export const WHOP_PLAN_ID_STARTER_NO_TRIAL = "plan_3LBCzIdy2JTt5";
 export const WHOP_PLAN_ID_GROWTH = "plan_KYchMiFoVLzEb";
 export const WHOP_PLAN_ID_UNLIMITED = "plan_0mbCPVFKhrg89";
 

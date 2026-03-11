@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireApiUser } from "@/lib/auth";
 import { syncUserBillingState } from "@/lib/billing";
-import { getBillingPlan, isPlanConfigured, parsePlanKey } from "@/lib/plans";
+import { getCheckoutPlan, isPlanConfigured, parsePlanKey } from "@/lib/plans";
 import {
   buildBillingMetadata,
   createWhopCheckoutSession,
@@ -37,7 +37,9 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}));
   const planKey = parsePlanKey(body.planKey) ?? "starter";
   const intent = parseCheckoutIntent(body.intent);
-  const plan = getBillingPlan(planKey);
+  const plan = getCheckoutPlan(planKey, {
+    allowStarterTrial: intent === "signup",
+  });
 
   if (!isPlanConfigured(plan)) {
     return NextResponse.json(

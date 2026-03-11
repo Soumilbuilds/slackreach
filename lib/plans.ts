@@ -1,6 +1,7 @@
 import {
   WHOP_PLAN_ID_GROWTH,
   WHOP_PLAN_ID_STARTER,
+  WHOP_PLAN_ID_STARTER_NO_TRIAL,
   WHOP_PLAN_ID_UNLIMITED,
   WHOP_PRODUCT_ID,
   WHOP_STARTER_TRIAL_DAYS,
@@ -92,6 +93,23 @@ const PLAN_MAP: Record<PlanKey, BillingPlan> = {
 export const BILLING_PLANS: BillingPlan[] = PLAN_ORDER.map((key) => PLAN_MAP[key]);
 
 export const getBillingPlan = (planKey: PlanKey): BillingPlan => PLAN_MAP[planKey];
+
+export const getCheckoutPlan = (
+  planKey: PlanKey,
+  options?: { allowStarterTrial?: boolean }
+): BillingPlan => {
+  const basePlan = getBillingPlan(planKey);
+
+  if (planKey !== "starter" || options?.allowStarterTrial !== false) {
+    return basePlan;
+  }
+
+  return {
+    ...basePlan,
+    whopPlanId: WHOP_PLAN_ID_STARTER_NO_TRIAL,
+    trialDays: 0,
+  };
+};
 
 export const parsePlanKey = (value: unknown): PlanKey | null => {
   if (typeof value !== "string") {
