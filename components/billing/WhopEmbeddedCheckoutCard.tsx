@@ -30,6 +30,7 @@ export default function WhopEmbeddedCheckoutCard({
         skipRedirect
         returnUrl={returnUrl}
         prefill={{ email }}
+        disableEmail
         setupFutureUsage="off_session"
         themeOptions={{ accentColor: "gray", highContrast: true }}
         onComplete={() => {
