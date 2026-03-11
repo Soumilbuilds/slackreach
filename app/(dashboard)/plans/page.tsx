@@ -88,10 +88,10 @@ export default function PlansPage() {
 
       if (response.ok) {
         if (payload.pending) {
-          setSuccess("Payment is processing. We will update your plan as soon as Whop confirms the charge.");
+          setSuccess("Payment is processing. Your plan will update once confirmed.");
         } else {
           setSuccess(
-            `Moving you to ${payload.plan?.name ?? targetPlanKey}. The new plan will show up as soon as Whop confirms it.`
+            `Moving you to ${payload.plan?.name ?? targetPlanKey}. Your plan will update once confirmed.`
           );
         }
 
@@ -154,108 +154,102 @@ export default function PlansPage() {
   if (loading) {
     return (
       <div>
-        <h2 className="mb-3 text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
+        <h2 className="text-2xl font-semibold tracking-tight text-gray-900 mb-3">
           Plans
         </h2>
-        <p className="text-sm text-neutral-400">Loading plan options...</p>
+        <p className="text-sm text-gray-400">Loading plan options...</p>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
+          <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
             Plans
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-600">
-            Change plans without leaving SlackReach. We try the saved card first. If Whop needs a fresh payment, we bring up the embedded checkout inside the app.
+          <p className="mt-1 text-sm text-gray-500">
+            Change or upgrade your plan anytime.
           </p>
         </div>
 
         {membershipStatus && (
-          <div className="rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-medium text-neutral-600 shadow-sm">
-            Membership status: <span className="text-neutral-950">{membershipStatus}</span>
-          </div>
+          <span className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600">
+            {membershipStatus}
+          </span>
         )}
       </div>
 
       {error && (
-        <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <div className="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
       {success && (
-        <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        <div className="mb-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
           {success}
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-3">
+      <div className="grid gap-5 xl:grid-cols-3">
         {plans.map((plan) => {
           const button = getButtonState(plan);
           const isCurrent = plan.key === currentPlanKey;
 
           return (
-            <article
+            <div
               key={plan.key}
-              className={`flex h-full flex-col overflow-hidden rounded-[28px] border bg-white shadow-[0_16px_56px_rgba(15,23,42,0.06)] transition ${
-                isCurrent
-                  ? "border-black/15"
-                  : "border-black/8 hover:-translate-y-0.5 hover:shadow-[0_22px_68px_rgba(15,23,42,0.08)]"
+              className={`flex flex-col rounded-lg border bg-white overflow-hidden ${
+                isCurrent ? "border-gray-900" : "border-gray-200"
               }`}
             >
-              <div className={`px-6 pb-6 pt-7 ${isCurrent ? "bg-[linear-gradient(180deg,rgba(17,24,39,0.06),rgba(255,255,255,0))]" : ""}`}>
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xl font-semibold tracking-[-0.04em] text-neutral-950">
-                      {plan.name}
-                    </p>
-                    <p className="mt-2 text-sm text-neutral-500">
-                      {plan.accountLimit == null
-                        ? "Unlimited Slack accounts"
-                        : `${plan.accountLimit} Slack account${plan.accountLimit === 1 ? "" : "s"}`}
-                    </p>
-                  </div>
-
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {plan.name}
+                  </p>
                   {isCurrent && (
-                    <span className="rounded-full bg-black px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-white">
+                    <span className="rounded-full bg-gray-900 px-2.5 py-0.5 text-[11px] font-medium text-white">
                       Active
                     </span>
                   )}
                 </div>
 
-                <div className="mt-8 flex items-end gap-2">
-                  <span className="text-[42px] font-semibold tracking-[-0.08em] text-neutral-950">
+                <p className="mt-1 text-xs text-gray-500">
+                  {plan.accountLimit == null
+                    ? "Unlimited accounts"
+                    : `${plan.accountLimit} account${plan.accountLimit === 1 ? "" : "s"}`}
+                </p>
+
+                <div className="mt-5 flex items-end gap-1">
+                  <span className="text-3xl font-semibold tracking-tight text-gray-900">
                     ${plan.monthlyPriceUsd}
                   </span>
-                  <span className="pb-2 text-sm text-neutral-400">/ month</span>
+                  <span className="text-sm text-gray-400 pb-0.5">/month</span>
                 </div>
 
                 {plan.trialDays > 0 && (
-                  <p className="mt-3 text-xs font-medium uppercase tracking-[0.22em] text-neutral-500">
-                    Includes {plan.trialDays}-day trial
+                  <p className="mt-2 text-xs text-gray-500">
+                    Includes {plan.trialDays}-day free trial
                   </p>
                 )}
               </div>
 
-              <div className="flex-1 border-t border-black/6 px-6 py-6">
-                <ul className="space-y-3">
+              <div className="flex-1 border-t border-gray-100 px-6 py-5">
+                <ul className="space-y-2.5">
                   {plan.features.map((feature) => (
-                    <li key={feature.label} className="flex items-start gap-3 text-sm">
-                      <span
-                        className={`mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full ${
-                          feature.included
-                            ? "bg-neutral-950 text-white"
-                            : "bg-neutral-100 text-neutral-300"
-                        }`}
-                      >
-                        {feature.included ? "•" : "×"}
-                      </span>
-                      <span
-                        className={feature.included ? "text-neutral-600" : "text-neutral-300 line-through"}
-                      >
+                    <li key={feature.label} className="flex items-center gap-2.5 text-sm">
+                      {feature.included ? (
+                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-gray-900 text-[10px] text-white">
+                          ✓
+                        </span>
+                      ) : (
+                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-gray-100 text-[10px] text-gray-400">
+                          ×
+                        </span>
+                      )}
+                      <span className={feature.included ? "text-gray-700" : "text-gray-400 line-through"}>
                         {feature.label}
                       </span>
                     </li>
@@ -267,16 +261,16 @@ export default function PlansPage() {
                 <button
                   onClick={() => handlePlanAction(plan.key)}
                   disabled={button.disabled || actionLoading !== null}
-                  className={`w-full rounded-full px-5 py-3 text-sm font-medium transition ${
+                  className={`w-full px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                     button.style === "dark"
-                      ? "bg-black text-white hover:bg-neutral-800"
-                      : "border border-black/10 bg-white text-neutral-700 hover:bg-neutral-50"
-                  } disabled:cursor-not-allowed disabled:opacity-45`}
+                      ? "bg-gray-900 text-white hover:bg-gray-800"
+                      : "border border-gray-300 text-gray-700 hover:bg-gray-50"
+                  } disabled:opacity-40 disabled:cursor-not-allowed`}
                 >
                   {actionLoading === plan.key ? "Processing..." : button.label}
                 </button>
               </div>
-            </article>
+            </div>
           );
         })}
       </div>

@@ -39,9 +39,7 @@ export default function BillingSelectClient({ email }: { email: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [selectedPlanKey, setSelectedPlanKey] = useState<string>(
-    searchParams.get("plan") ?? "starter"
-  );
+  const [selectedPlanKey, setSelectedPlanKey] = useState<string>("starter");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [plansLoading, setPlansLoading] = useState(true);
   const [sessionLoading, setSessionLoading] = useState(true);
@@ -62,9 +60,12 @@ export default function BillingSelectClient({ email }: { email: string }) {
   }, [searchParams]);
 
   useEffect(() => {
-    const requestedPlan = searchParams.get("plan");
-    if (requestedPlan) {
-      setSelectedPlanKey(requestedPlan);
+    const raw = searchParams.get("intent");
+    if (raw === "plan_change" || raw === "account_limit_upgrade") {
+      const requestedPlan = searchParams.get("plan");
+      if (requestedPlan) {
+        setSelectedPlanKey(requestedPlan);
+      }
     }
   }, [searchParams]);
 
@@ -121,7 +122,7 @@ export default function BillingSelectClient({ email }: { email: string }) {
 
     setSubmitting(false);
     setErrorMessage(
-      "Payment was submitted. We are still waiting for Whop to confirm your access. Refresh this page in a few seconds."
+      "Payment was submitted. We are still waiting for confirmation. Refresh this page in a few seconds."
     );
   }, [router]);
 
@@ -145,7 +146,7 @@ export default function BillingSelectClient({ email }: { email: string }) {
 
         const payload = (await response.json()) as { sessionId?: string };
         if (!payload.sessionId) {
-          setErrorMessage("Whop checkout session could not be created.");
+          setErrorMessage("Checkout session could not be created.");
           return;
         }
 
@@ -167,187 +168,104 @@ export default function BillingSelectClient({ email }: { email: string }) {
     void loadCheckoutSession(selectedPlanKey);
   }, [loadCheckoutSession, plansLoading, selectedPlanKey]);
 
-  const selectedPlan =
-    plans.find((plan) => plan.key === selectedPlanKey) ?? plans[0] ?? null;
-
-  const copy =
+  const headingText =
     intent === "plan_change"
-      ? {
-          eyebrow: "Plan Change",
-          title: "Switch plans without leaving SlackReach",
-          description:
-            "We will try to preserve the cleanest path possible. If your saved card cannot be charged off-session, finish the change below.",
-          kicker: "No proration. No refund math. Just a clean move to the new plan.",
-        }
+      ? "Change Plan"
       : intent === "account_limit_upgrade"
-        ? {
-            eyebrow: "Unlock More Seats",
-            title: "Upgrade and keep moving",
-            description:
-              "Your current seat limit is reached. Choose a higher plan and finish payment here to unlock more Slack accounts immediately.",
-            kicker: "Once billing clears, the extra account slots open automatically.",
-          }
+        ? "Upgrade Plan"
         : intent === "recover"
-          ? {
-              eyebrow: "Resume Access",
-              title: "Bring your workspace back online",
-              description:
-                "Your last billing cycle needs attention. Complete payment below to restore access and resume sending.",
-              kicker: "We keep you on a locked billing screen until access is active again.",
-            }
-          : {
-              eyebrow: "Start Trial",
-              title: "Start your trial now",
-              description:
-                "SlackReach stays locked until billing is set up. Your email is already passed through, so this is just plan selection and payment.",
-              kicker: "Starter includes a 7-day trial. Growth and Unlimited begin billing immediately.",
-            };
+          ? "Resume Access"
+          : "Start Your Trial";
+
+  const descriptionText =
+    intent === "signup"
+      ? "Free For 7 Days | Cancel Anytime"
+      : intent === "plan_change"
+        ? "Select your new plan and complete payment below."
+        : intent === "recover"
+          ? "Complete payment below to restore your access."
+          : "Upgrade to a higher plan to unlock more accounts.";
+
+  const showPlanSelection = intent !== "signup";
+  const submitLabel =
+    intent === "signup"
+      ? "Start free trial"
+      : intent === "recover"
+        ? "Resume access"
+        : intent === "plan_change"
+          ? "Update plan"
+          : "Upgrade now";
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#f7f1e8,transparent_42%),linear-gradient(180deg,#faf7f2_0%,#f4efe7_100%)] px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-7xl gap-6 lg:grid-cols-[0.94fr_1.06fr]">
-        <section className="overflow-hidden rounded-[32px] border border-black/8 bg-[#121212] text-white shadow-[0_36px_120px_rgba(15,23,42,0.18)]">
-          <div className="flex h-full flex-col p-6 sm:p-8 lg:p-10">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">
-                {copy.eyebrow}
-              </p>
-              <h1 className="mt-5 max-w-xl text-4xl font-semibold tracking-[-0.06em] text-white sm:text-5xl">
-                {copy.title}
-              </h1>
-              <p className="mt-5 max-w-xl text-sm leading-6 text-white/68 sm:text-[15px]">
-                {copy.description}
-              </p>
-            </div>
+    <div className="min-h-screen bg-gray-50 flex items-start justify-center px-4 py-12 sm:py-16">
+      <div className="w-full max-w-5xl">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
+            {headingText}
+          </h1>
+          <p className="mt-2 text-sm text-gray-500">
+            {descriptionText}
+          </p>
+          <p className="mt-1 text-xs text-gray-400">
+            Signed in as {email}
+          </p>
+        </div>
 
-            <div className="mt-8 grid gap-4 rounded-[24px] border border-white/10 bg-white/4 p-4 backdrop-blur-sm sm:grid-cols-2">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.24em] text-white/40">
-                  Signed In As
-                </p>
-                <p className="mt-2 text-sm font-medium text-white/88">{email}</p>
-              </div>
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.24em] text-white/40">
-                  Billing Flow
-                </p>
-                <p className="mt-2 text-sm font-medium text-white/88">{copy.kicker}</p>
-              </div>
-            </div>
+        {errorMessage && (
+          <div className="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errorMessage}
+          </div>
+        )}
 
-            <div className="mt-8 flex-1 space-y-3">
+        <div className={showPlanSelection ? "grid gap-6 lg:grid-cols-[1fr_1.2fr]" : "max-w-lg mx-auto"}>
+          {/* Plan selection — only for plan_change / upgrade / recover */}
+          {showPlanSelection && (
+            <div className="space-y-3">
               {plans.map((plan) => {
                 const isSelected = plan.key === selectedPlanKey;
-                const buttonLabel =
-                  intent === "signup" && plan.trialDays > 0 ? "Start trial" : "Select";
-
                 return (
                   <button
                     key={plan.key}
                     type="button"
                     onClick={() => setSelectedPlanKey(plan.key)}
-                    className={`w-full rounded-[24px] border px-5 py-5 text-left transition-all ${
+                    className={`w-full rounded-lg border p-5 text-left transition-colors ${
                       isSelected
-                        ? "border-[#f7dfc2] bg-[#f7dfc2] text-neutral-950 shadow-[0_18px_45px_rgba(247,223,194,0.16)]"
-                        : "border-white/10 bg-white/5 text-white/84 hover:border-white/18 hover:bg-white/7"
+                        ? "border-gray-900 bg-white shadow-sm"
+                        : "border-gray-200 bg-white hover:border-gray-300"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-lg font-semibold tracking-[-0.04em]">{plan.name}</p>
-                          {plan.trialDays > 0 && (
-                            <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${
-                              isSelected ? "bg-neutral-950 text-[#f7dfc2]" : "bg-white/10 text-white/68"
-                            }`}>
-                              {plan.trialDays}-day trial
-                            </span>
-                          )}
-                        </div>
-                        <p className={`mt-2 text-sm ${isSelected ? "text-neutral-700" : "text-white/58"}`}>
+                        <p className={`text-sm font-semibold ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
+                          {plan.name}
+                        </p>
+                        <p className="mt-1 text-xs text-gray-500">
                           {plan.accountLimit == null
-                            ? "Unlimited Slack accounts"
-                            : `${plan.accountLimit} Slack account${plan.accountLimit === 1 ? "" : "s"}`}
+                            ? "Unlimited accounts"
+                            : `${plan.accountLimit} account${plan.accountLimit === 1 ? "" : "s"}`}
                         </p>
                       </div>
-
                       <div className="text-right">
-                        <p className="text-3xl font-semibold tracking-[-0.05em]">
+                        <p className={`text-lg font-semibold ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
                           ${plan.monthlyPriceUsd}
                         </p>
-                        <p className={`mt-1 text-xs ${isSelected ? "text-neutral-600" : "text-white/48"}`}>
-                          per month
-                        </p>
+                        <p className="text-xs text-gray-400">/month</p>
                       </div>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between gap-3">
-                      <div className="flex flex-wrap gap-2">
-                        {plan.features
-                          .filter((feature) => feature.included)
-                          .slice(0, 3)
-                          .map((feature) => (
-                            <span
-                              key={feature.label}
-                              className={`rounded-full px-2.5 py-1 text-[11px] ${
-                                isSelected
-                                  ? "bg-black/6 text-neutral-700"
-                                  : "bg-white/8 text-white/64"
-                              }`}
-                            >
-                              {feature.label}
-                            </span>
-                          ))}
-                      </div>
-
-                      <span className={`text-xs font-medium ${isSelected ? "text-neutral-900" : "text-white/72"}`}>
-                        {isSelected ? "Selected" : buttonLabel}
-                      </span>
                     </div>
                   </button>
                 );
               })}
             </div>
-          </div>
-        </section>
-
-        <section className="flex min-h-[640px] flex-col rounded-[32px] border border-black/8 bg-white/70 p-4 shadow-[0_36px_120px_rgba(15,23,42,0.10)] backdrop-blur-sm sm:p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-neutral-500">
-                Payment Panel
-              </p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-neutral-950 sm:text-[30px]">
-                {selectedPlan ? `${selectedPlan.name} checkout` : "Checkout"}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-neutral-600">
-                Finish payment here. If billing clears successfully, SlackReach unlocks automatically.
-              </p>
-            </div>
-            {selectedPlan && (
-              <div className="rounded-[20px] border border-black/8 bg-black px-4 py-3 text-right text-white shadow-[0_16px_44px_rgba(15,23,42,0.18)]">
-                <p className="text-[10px] uppercase tracking-[0.24em] text-white/42">Current selection</p>
-                <p className="mt-1 text-2xl font-semibold tracking-[-0.05em]">
-                  ${selectedPlan.monthlyPriceUsd}
-                </p>
-                <p className="mt-1 text-xs text-white/58">{selectedPlan.name}</p>
-              </div>
-            )}
-          </div>
-
-          {errorMessage && (
-            <div className="mt-5 rounded-[20px] border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-              {errorMessage}
-            </div>
           )}
 
-          <div className="mt-6 flex-1">
+          {/* Checkout embed */}
+          <div>
             {sessionLoading || !sessionId ? (
-              <div className="flex h-full min-h-[520px] items-center justify-center rounded-[28px] border border-dashed border-black/10 bg-neutral-50">
+              <div className="flex h-full min-h-[500px] items-center justify-center rounded-lg border border-gray-200 bg-white">
                 <div className="text-center">
-                  <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-black" />
-                  <p className="mt-4 text-sm text-neutral-500">
-                    {plansLoading ? "Loading plans..." : "Preparing secure checkout..."}
+                  <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-gray-900" />
+                  <p className="mt-3 text-sm text-gray-500">
+                    {plansLoading ? "Loading plans..." : "Preparing checkout..."}
                   </p>
                 </div>
               </div>
@@ -355,19 +273,20 @@ export default function BillingSelectClient({ email }: { email: string }) {
               <WhopEmbeddedCheckoutCard
                 sessionId={sessionId}
                 email={email}
+                submitLabel={submitLabel}
                 onComplete={() => {
                   void waitForActivation();
                 }}
               />
             )}
-          </div>
 
-          {submitting && (
-            <div className="mt-5 rounded-[20px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-              Payment submitted. Waiting for Whop to confirm your access.
-            </div>
-          )}
-        </section>
+            {submitting && (
+              <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                Payment submitted. Confirming your access...
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

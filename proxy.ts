@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 const SESSION_COOKIE_NAME = "slakreach_session";
 
 const PUBLIC_PAGE_PATHS = new Set<string>(["/access"]);
-const PUBLIC_API_PREFIXES = ["/api/auth/users", "/api/auth/login", "/api/stripe/webhook", "/api/cron"];
+const PUBLIC_API_PREFIXES = ["/api/auth/users", "/api/auth/login", "/api/stripe/webhook", "/api/whop/webhook", "/api/cron"];
 
 const isStaticAsset = (pathname: string): boolean =>
   pathname.startsWith("/_next") ||

@@ -21,7 +21,7 @@ const formatStatus = (status: string | null, cancelAtPeriodEnd: boolean): string
   }
 
   if (cancelAtPeriodEnd && status === "canceling") {
-    return "Active until the current period ends";
+    return "Active until period ends";
   }
 
   return status.replaceAll("_", " ");
@@ -79,78 +79,67 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div>
-        <h2 className="mb-3 text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
+        <h2 className="text-2xl font-semibold tracking-tight text-gray-900 mb-3">
           Settings
         </h2>
-        <p className="text-sm text-neutral-400">Loading settings...</p>
+        <p className="text-sm text-gray-400">Loading settings...</p>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
           Settings
         </h2>
-        <p className="mt-2 text-sm leading-6 text-neutral-600">
-          Billing is handled directly inside SlackReach now. No external customer portal, no redirect loops.
-        </p>
       </div>
 
-      <div className="max-w-3xl rounded-[28px] border border-black/8 bg-white shadow-[0_16px_56px_rgba(15,23,42,0.06)]">
-        <div className="grid gap-0 divide-y divide-black/6">
-          <div className="grid gap-2 px-6 py-5 sm:grid-cols-[160px_1fr] sm:items-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-neutral-400">
-              Email
-            </span>
-            <span className="text-sm font-medium text-neutral-950">{user?.email ?? "—"}</span>
-          </div>
+      <div className="max-w-2xl rounded-lg border border-gray-200 bg-white divide-y divide-gray-100">
+        <div className="flex items-center justify-between px-5 py-4">
+          <span className="text-sm text-gray-500">Email</span>
+          <span className="text-sm font-medium text-gray-900">{user?.email ?? "—"}</span>
+        </div>
 
-          <div className="grid gap-2 px-6 py-5 sm:grid-cols-[160px_1fr] sm:items-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-neutral-400">
-              Plan
+        <div className="flex items-center justify-between px-5 py-4">
+          <span className="text-sm text-gray-500">Plan</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-900">
+              {user?.planName ?? "No active plan"}
             </span>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-sm font-medium text-neutral-950">
-                {user?.planName ?? "No active plan"}
-              </span>
-              <Link
-                href="/plans"
-                className="inline-flex items-center rounded-full border border-black/10 px-3 py-1.5 text-xs font-medium text-neutral-700 transition hover:bg-neutral-50"
-              >
-                Change plan
-              </Link>
-            </div>
+            <Link
+              href="/plans"
+              className="px-3 py-1 text-xs font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              Change
+            </Link>
           </div>
+        </div>
 
-          <div className="grid gap-2 px-6 py-5 sm:grid-cols-[160px_1fr] sm:items-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-neutral-400">
-              Billing status
+        <div className="flex items-center justify-between px-5 py-4">
+          <span className="text-sm text-gray-500">Billing</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-900 capitalize">
+              {formatStatus(billing?.membershipStatus ?? null, billing?.cancelAtPeriodEnd ?? false)}
             </span>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-sm font-medium capitalize text-neutral-950">
-                {formatStatus(billing?.membershipStatus ?? null, billing?.cancelAtPeriodEnd ?? false)}
-              </span>
-              {billing?.membershipStatus &&
-                !["active", "trialing", "canceling"].includes(billing.membershipStatus) && (
-                  <Link
-                    href="/billing/blocked"
-                    className="inline-flex items-center rounded-full bg-black px-3 py-1.5 text-xs font-medium text-white transition hover:bg-neutral-800"
-                  >
-                    Resolve billing
-                  </Link>
-                )}
-            </div>
+            {billing?.membershipStatus &&
+              !["active", "trialing", "canceling"].includes(billing.membershipStatus) && (
+                <Link
+                  href="/billing/blocked"
+                  className="px-3 py-1 text-xs font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Resolve
+                </Link>
+              )}
           </div>
         </div>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-8">
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="text-sm text-neutral-400 transition hover:text-neutral-600 disabled:opacity-50"
+          className="text-sm text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
         >
           {signingOut ? "Signing out..." : "Sign out"}
         </button>

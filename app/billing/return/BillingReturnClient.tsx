@@ -23,20 +23,20 @@ export default function BillingReturnClient() {
   }, [isSuccess, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,#faf7f2_0%,#f4efe7_100%)] px-4">
-      <div className="w-full max-w-lg rounded-[28px] border border-black/8 bg-white p-8 text-center shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
-        <h1 className="text-3xl font-semibold tracking-[-0.05em] text-neutral-950">
-          {isSuccess ? "Authorization complete" : "Return to checkout"}
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-8 text-center">
+        <h1 className="text-xl font-semibold tracking-tight text-gray-900">
+          {isSuccess ? "Payment complete" : "Return to checkout"}
         </h1>
-        <p className="mt-3 text-sm leading-6 text-neutral-600">
+        <p className="mt-2 text-sm text-gray-500">
           {isSuccess
-            ? "Whop sent you back to SlackReach. We are finishing access now."
-            : "The payment flow was interrupted. Re-open the embedded checkout to continue."}
+            ? "Finishing setup. You will be redirected shortly."
+            : "The payment flow was interrupted. Go back to try again."}
         </p>
         <div className="mt-6">
           <button
             onClick={() => router.replace(isSuccess ? "/accounts" : "/billing/select")}
-            className="rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+            className="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition-colors"
           >
             {isSuccess ? "Open dashboard" : "Back to billing"}
           </button>
