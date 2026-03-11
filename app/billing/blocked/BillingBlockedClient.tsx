@@ -14,16 +14,8 @@ type BillingAddress = {
   postalCode: string;
 };
 
-type Plan = {
-  key: "starter" | "growth" | "unlimited";
-  name: string;
-  monthlyPriceUsd: number;
-  accountLimit: number | null;
-};
-
 type BillingStatus = {
   membershipStatus: string | null;
-  planKey: "starter" | "growth" | "unlimited" | null;
 };
 
 const ACCESS_ALLOWED_STATUSES = new Set(["active", "trialing", "canceling"]);
@@ -47,12 +39,7 @@ export default function BillingBlockedClient({
   billingAddress?: BillingAddress | null;
 }) {
   const router = useRouter();
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [selectedPlanKey, setSelectedPlanKey] = useState<
-    "starter" | "growth" | "unlimited"
-  >("starter");
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [plansLoading, setPlansLoading] = useState(true);
   const [sessionLoading, setSessionLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -63,21 +50,9 @@ export default function BillingBlockedClient({
 
     const loadPageData = async () => {
       try {
-        const [plansResponse, statusResponse] = await Promise.all([
-          fetch("/api/plans", { cache: "no-store" }),
-          fetch("/api/billing/status", { cache: "no-store" }),
-        ]);
-
-        if (!plansResponse.ok) {
-          throw new Error("Unable to load billing plans right now.");
-        }
-
-        const plansData = (await plansResponse.json()) as { plans?: Plan[] };
-        const loadedPlans = plansData.plans ?? [];
-
-        if (!cancelled) {
-          setPlans(loadedPlans);
-        }
+        const statusResponse = await fetch("/api/billing/status", {
+          cache: "no-store",
+        });
 
         if (statusResponse.ok) {
           const statusData = (await statusResponse.json()) as BillingStatus;
@@ -90,20 +65,6 @@ export default function BillingBlockedClient({
             router.refresh();
             return;
           }
-
-          if (
-            !cancelled &&
-            statusData.planKey &&
-            (statusData.planKey === "starter" ||
-              statusData.planKey === "growth" ||
-              statusData.planKey === "unlimited")
-          ) {
-            setSelectedPlanKey(statusData.planKey);
-          } else if (!cancelled && loadedPlans[0]?.key) {
-            setSelectedPlanKey(loadedPlans[0].key);
-          }
-        } else if (!cancelled && loadedPlans[0]?.key) {
-          setSelectedPlanKey(loadedPlans[0].key);
         }
       } catch (error) {
         if (!cancelled) {
@@ -112,10 +73,6 @@ export default function BillingBlockedClient({
               ? error.message
               : "Unable to load billing details right now."
           );
-        }
-      } finally {
-        if (!cancelled) {
-          setPlansLoading(false);
         }
       }
     };
@@ -161,7 +118,7 @@ export default function BillingBlockedClient({
     );
   }, [router]);
 
-  const loadCheckoutSession = useCallback(async (planKey: Plan["key"]) => {
+  const loadCheckoutSession = useCallback(async () => {
     setSessionLoading(true);
     setErrorMessage("");
     setSessionId(null);
@@ -170,7 +127,7 @@ export default function BillingBlockedClient({
       const response = await fetch("/api/billing/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planKey, intent: "recover" }),
+        body: JSON.stringify({ planKey: "starter", intent: "recover" }),
       });
 
       if (!response.ok) {
@@ -193,8 +150,8 @@ export default function BillingBlockedClient({
   }, []);
 
   useEffect(() => {
-    void loadCheckoutSession(selectedPlanKey);
-  }, [loadCheckoutSession, selectedPlanKey]);
+    void loadCheckoutSession();
+  }, [loadCheckoutSession]);
 
   const handleSignOut = useCallback(async () => {
     setSigningOut(true);
@@ -227,51 +184,11 @@ export default function BillingBlockedClient({
         )}
 
         <div className="space-y-6">
-          <div className="grid gap-3 md:grid-cols-3">
-            {plans.map((plan) => {
-              const isSelected = plan.key === selectedPlanKey;
-
-              return (
-                <button
-                  key={plan.key}
-                  type="button"
-                  onClick={() => setSelectedPlanKey(plan.key)}
-                  className={`rounded-xl border bg-white p-5 text-left transition-all ${
-                    isSelected
-                      ? "border-gray-900 shadow-sm ring-1 ring-gray-900/10"
-                      : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-base font-semibold text-gray-900">
-                        {plan.name}
-                      </p>
-                      <p className="mt-1 text-sm text-gray-500">
-                        {plan.accountLimit == null
-                          ? "Unlimited accounts"
-                          : `${plan.accountLimit} account${plan.accountLimit === 1 ? "" : "s"}`}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-semibold tracking-tight text-gray-900">
-                        ${plan.monthlyPriceUsd}
-                      </p>
-                      <p className="text-xs text-gray-400">/month</p>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
           {sessionLoading || !sessionId ? (
             <div className="flex min-h-[520px] items-center justify-center rounded-lg border border-gray-200 bg-white">
               <div className="text-center">
                 <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-gray-900" />
-                <p className="mt-3 text-sm text-gray-500">
-                  {plansLoading ? "Loading plans..." : "Preparing checkout..."}
-                </p>
+                <p className="mt-3 text-sm text-gray-500">Preparing checkout...</p>
               </div>
             </div>
           ) : (
