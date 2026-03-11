@@ -139,6 +139,11 @@ export const getPlanForWhopPlanId = (
   if (!planId) {
     return null;
   }
+
+  if (planId === WHOP_PLAN_ID_STARTER_NO_TRIAL) {
+    return PLAN_MAP.starter;
+  }
+
   return BILLING_PLANS.find((plan) => plan.whopPlanId === planId) ?? null;
 };
 

@@ -235,13 +235,24 @@ export const syncUserBillingState = async (
       : Promise.resolve(null),
   ]);
 
+  const storedMembershipStatus =
+    storedMembership?.status ?? user.whopMembershipStatus ?? null;
+  const storedPaymentStatus =
+    storedPayment?.status ?? user.whopLastPaymentStatus ?? null;
+  const storedPaymentSubstatus =
+    storedPayment?.substatus ?? user.whopLastPaymentSubstatus ?? null;
+
   const shouldRecoverFromWhop =
     !storedMembership ||
     !storedPayment ||
     !user.whopMemberId ||
     !user.whopMembershipId ||
     !user.whopPaymentMethodId ||
-    !user.subscriptionPlanKey;
+    !user.subscriptionPlanKey ||
+    !ACCESS_ALLOWED_STATUSES.has(storedMembershipStatus ?? "") ||
+    storedPaymentStatus === "open" ||
+    storedPaymentStatus === "failed" ||
+    storedPaymentSubstatus === "failed";
 
   const recovered = shouldRecoverFromWhop
     ? await recoverWhopBillingStateByEmail(user.email).catch(() => null)
