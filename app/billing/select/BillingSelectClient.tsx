@@ -187,15 +187,6 @@ export default function BillingSelectClient({ email }: { email: string }) {
           : "Upgrade to a higher plan to unlock more accounts.";
 
   const showPlanSelection = intent !== "signup";
-  const submitLabel =
-    intent === "signup"
-      ? "Start free trial"
-      : intent === "recover"
-        ? "Resume access"
-        : intent === "plan_change"
-          ? "Update plan"
-          : "Upgrade now";
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-start justify-center px-4 py-12 sm:py-16">
       <div className="w-full max-w-5xl">
@@ -273,7 +264,6 @@ export default function BillingSelectClient({ email }: { email: string }) {
               <WhopEmbeddedCheckoutCard
                 sessionId={sessionId}
                 email={email}
-                submitLabel={submitLabel}
                 onComplete={() => {
                   void waitForActivation();
                 }}

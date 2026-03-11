@@ -334,7 +334,6 @@ export default function BillingBlockedClient() {
               <WhopEmbeddedCheckoutCard
                 sessionId={sessionId}
                 email={email}
-                submitLabel="Resume access"
                 onComplete={() => {
                   void waitForRecovery();
                 }}
