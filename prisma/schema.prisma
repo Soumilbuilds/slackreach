@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id                       Int              @id @default(autoincrement())
+  email                    String           @unique
+  passwordHash             String
+  stripeCustomerId         String?          @unique
+  stripeSubscriptionId     String?
+  stripeSubscriptionStatus String?
+  stripeTrialEnd           DateTime?
+  stripePriceId            String?
+  stripeProductId          String?
+  whopMemberId             String?          @unique
+  whopMembershipId         String?          @unique
+  whopMembershipStatus     String?
+  whopRenewalPeriodEnd     DateTime?
+  whopCancelAtPeriodEnd    Boolean          @default(false)
+  whopPlanId               String?
+  whopProductId            String?
+  whopPaymentMethodId      String?
+  whopLastPaymentId        String?
+  whopLastPaymentStatus    String?
+  whopLastPaymentSubstatus String?
+  whopLastInvoiceId        String?
+  whopLastInvoiceStatus    String?
+  whopLastInvoiceToken     String?
+  subscriptionPlanKey      String?
+  createdAt                DateTime         @default(now())
+  updatedAt                DateTime         @updatedAt
+  accounts                 Account[]
+  campaigns                Campaign[]
+  leadLists                LeadList[]
+  contactedLeads           ContactedLead[]
+}
+
+model Account {
+  id                Int               @id @default(autoincrement())
+  userId            Int
+  nickname          String
+  cookies           String
+  workspaceUrl      String?
+  cookieFingerprint String?
+  createdAt         DateTime          @default(now())
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaigns         CampaignAccount[]
+  leadLists         LeadList[]
+
+  @@index([userId])
+}
+
+model Campaign {
+  id                       Int               @id @default(autoincrement())
+  userId                   Int
+  name                     String
+  status                   String            @default("draft")
+  dmsPerDay                Int               @default(10)
+  minDelaySeconds          Int               @default(60)
+  maxDelaySeconds          Int               @default(180)
+  skipPreviouslyContacted  Boolean           @default(false)
+  nextSendAt               DateTime?
+  lastSentAt               DateTime?
+  sendError                String?
+  createdAt                DateTime          @default(now())
+  user                     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages                 CampaignMessage[]
+  accounts                 CampaignAccount[]
+  leads                    CampaignLead[]
+
+  @@index([userId])
+}
+
+model CampaignMessage {
+  id          Int      @id @default(autoincrement())
+  campaignId  Int
+  messageText String
+  sortOrder   Int      @default(0)
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+}
+
+model CampaignAccount {
+  id         Int      @id @default(autoincrement())
+  campaignId Int
+  accountId  Int
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  account    Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, accountId])
+}
+
+model LeadList {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  workspaceUrl   String
+  teamId         String
+  channelId      String
+  requestedCount Int
+  scrapedCount   Int      @default(0)
+  status         String   @default("pending")
+  errorMessage   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  accountId      Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account        Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  leads          Lead[]
+
+  @@index([userId])
+}
+
+model Lead {
+  id          Int            @id @default(autoincrement())
+  listId      Int?
+  slackUserId String
+  teamId      String
+  username    String
+  realName    String
+  displayName String?
+  firstName   String
+  lastName    String?
+  title       String?
+  timezone    String?
+  avatarUrl   String?
+  profileRaw  String
+  createdAt   DateTime       @default(now())
+  list        LeadList?      @relation(fields: [listId], references: [id], onDelete: SetNull)
+  campaigns   CampaignLead[]
+
+  @@unique([listId, slackUserId])
+}
+
+model CampaignLead {
+  id           Int       @id @default(autoincrement())
+  campaignId   Int
+  leadId       Int
+  status       String    @default("pending")
+  sentAt       DateTime?
+  messageText  String?
+  dmChannelId  String?
+  dmTs         String?
+  errorMessage String?
+  createdAt    DateTime  @default(now())
+  campaign     Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  lead         Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, leadId])
+}
+
+/// Permanent record of every slackUserId we have successfully DM'd.
+/// Survives campaign deletion — prevents ever double-messaging someone.
+model ContactedLead {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  slackUserId String
+  contactedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slackUserId])
+  @@index([userId])
+}

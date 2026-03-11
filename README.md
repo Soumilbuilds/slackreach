@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SlackReach
 
-## Getting Started
+SlackReach is a Next.js app for Slack outbound automation with in-app billing handled through Whop embedded checkout.
 
-First, run the development server:
+## Billing Status
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Stripe runtime logic has been removed from the app flow.
+- Whop is now the billing source of truth.
+- The Whop migration is additive at the database level. Existing users are not deleted by the migration.
+
+## Environment Variables
+
+Copy `.env.example` to `.env` for local development. Production must set all required values explicitly.
+
+```env
+DATABASE_URL="file:./dev.db"
+SESSION_SECRET="replace-with-a-long-random-secret"
+APP_BASE_URL="https://app.slackreach.com"
+WHOP_API_KEY="replace-with-company-api-key"
+WHOP_COMPANY_ID="biz_..."
+WHOP_WEBHOOK_SECRET="ws_..."
+WHOP_ENVIRONMENT="production"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Notes:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `SESSION_SECRET` must be set in production.
+- `DATABASE_URL` must be set in production.
+- `APP_BASE_URL` must be the real app origin in production.
+- The Whop webhook URL must be `https://app.slackreach.com/api/whop/webhook`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local Setup
 
-## Learn More
+```bash
+cd /Users/poonam/Desktop/SlackReach
+cp .env.example .env
+npm install
+npx prisma migrate deploy
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+App runs at `http://localhost:3000`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Production Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Use the steps in [DEPLOY.md](/Users/poonam/Desktop/SlackReach/DEPLOY.md).
 
-## Deploy on Vercel
+Short version:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git pull --ff-only origin main
+npm install
+npx prisma migrate deploy
+npm run build
+# restart your process manager
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Whop Plans
+
+- Product: `prod_dykz42RsTpcMC`
+- Starter: `plan_TIrQGsxQD2IWT` with 7-day trial
+- Growth: `plan_KYchMiFoVLzEb`
+- Unlimited: `plan_0mbCPVFKhrg89`
+
+## Public Signup Endpoint
+
+`POST /api/auth/users` is intentionally public for external signup automation.
+
+Example:
+
+```bash
+curl -X POST https://app.slackreach.com/api/auth/users \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"strong-password"}'
+```
