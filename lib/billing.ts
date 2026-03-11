@@ -3,6 +3,7 @@ import { type AuthenticatedUser } from "@/lib/auth";
 import type { Invoice, Membership, Payment } from "@whop/sdk/resources/shared";
 import {
   isWhopReady,
+  recoverWhopBillingStateByEmail,
   retrieveWhopInvoice,
   retrieveWhopMembership,
   retrieveWhopPayment,
@@ -23,6 +24,24 @@ const BILLING_ISSUE_STATUSES = new Set([
   "canceled",
   "expired",
 ]);
+
+const MEMBERSHIP_STATUS_PRIORITY: Record<string, number> = {
+  active: 7,
+  trialing: 6,
+  canceling: 5,
+  past_due: 4,
+  unresolved: 3,
+  canceled: 2,
+  expired: 1,
+};
+
+const PAYMENT_STATUS_PRIORITY: Record<string, number> = {
+  paid: 5,
+  open: 4,
+  pending: 3,
+  failed: 2,
+  void: 1,
+};
 
 export type BillingGateDecision = {
   shouldAllowAccess: boolean;
@@ -88,6 +107,73 @@ const toDate = (value: string | null | undefined): Date | null => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
+const getMembershipPriority = (membership: Membership | null): number =>
+  MEMBERSHIP_STATUS_PRIORITY[membership?.status ?? ""] ?? 0;
+
+const getPaymentPriority = (payment: Payment | null): number =>
+  PAYMENT_STATUS_PRIORITY[payment?.status ?? ""] ?? 0;
+
+const pickPreferredMembership = (
+  primary: Membership | null,
+  fallback: Membership | null
+): Membership | null => {
+  if (!primary) {
+    return fallback;
+  }
+
+  if (!fallback) {
+    return primary;
+  }
+
+  const priorityDelta =
+    getMembershipPriority(fallback) - getMembershipPriority(primary);
+  if (priorityDelta !== 0) {
+    return priorityDelta > 0 ? fallback : primary;
+  }
+
+  const fallbackRenewal = toDate(fallback.renewal_period_end)?.getTime() ?? 0;
+  const primaryRenewal = toDate(primary.renewal_period_end)?.getTime() ?? 0;
+  if (fallbackRenewal !== primaryRenewal) {
+    return fallbackRenewal > primaryRenewal ? fallback : primary;
+  }
+
+  return primary;
+};
+
+const pickPreferredPayment = (
+  primary: Payment | null,
+  fallback: Payment | null,
+  preferredMembershipId: string | null
+): Payment | null => {
+  if (!primary) {
+    return fallback;
+  }
+
+  if (!fallback) {
+    return primary;
+  }
+
+  const membershipMatchDelta =
+    Number((fallback.membership?.id ?? null) === preferredMembershipId) -
+    Number((primary.membership?.id ?? null) === preferredMembershipId);
+  if (membershipMatchDelta !== 0) {
+    return membershipMatchDelta > 0 ? fallback : primary;
+  }
+
+  const priorityDelta = getPaymentPriority(fallback) - getPaymentPriority(primary);
+  if (priorityDelta !== 0) {
+    return priorityDelta > 0 ? fallback : primary;
+  }
+
+  const fallbackPaidAt = toDate(fallback.paid_at)?.getTime() ?? 0;
+  const primaryPaidAt = toDate(primary.paid_at)?.getTime() ?? 0;
+  if (fallbackPaidAt !== primaryPaidAt) {
+    return fallbackPaidAt > primaryPaidAt ? fallback : primary;
+  }
+
+  return primary;
+};
+
 const updateStoredWhopState = async (
   user: AuthenticatedUser,
   snapshot: {
@@ -137,7 +223,7 @@ const updateStoredWhopState = async (
 export const syncUserBillingState = async (
   user: AuthenticatedUser
 ): Promise<BillingSyncResult> => {
-  const [membership, payment, invoice] = await Promise.all([
+  const [storedMembership, storedPayment, storedInvoice] = await Promise.all([
     user.whopMembershipId
       ? retrieveWhopMembership(user.whopMembershipId).catch(() => null)
       : Promise.resolve(null),
@@ -149,10 +235,40 @@ export const syncUserBillingState = async (
       : Promise.resolve(null),
   ]);
 
+  const shouldRecoverFromWhop =
+    !storedMembership ||
+    !storedPayment ||
+    !user.whopMemberId ||
+    !user.whopMembershipId ||
+    !user.whopPaymentMethodId ||
+    !user.subscriptionPlanKey;
+
+  const recovered = shouldRecoverFromWhop
+    ? await recoverWhopBillingStateByEmail(user.email).catch(() => null)
+    : null;
+
+  const membership = pickPreferredMembership(
+    storedMembership,
+    recovered?.membership ?? null
+  );
+  const payment = pickPreferredPayment(
+    storedPayment,
+    recovered?.payment ?? null,
+    membership?.id ?? storedMembership?.id ?? recovered?.membership?.id ?? null
+  );
+  const invoice = storedInvoice ?? recovered?.invoice ?? null;
+
   const memberId =
-    membership?.member?.id ?? payment?.member?.id ?? user.whopMemberId ?? null;
+    membership?.member?.id ??
+    payment?.member?.id ??
+    recovered?.memberId ??
+    user.whopMemberId ??
+    null;
   const paymentMethodId =
-    payment?.payment_method?.id ?? user.whopPaymentMethodId ?? null;
+    payment?.payment_method?.id ??
+    recovered?.paymentMethodId ??
+    user.whopPaymentMethodId ??
+    null;
   const membershipStatus = membership?.status ?? user.whopMembershipStatus ?? null;
   const cancelAtPeriodEnd =
     membership?.cancel_at_period_end ?? user.whopCancelAtPeriodEnd;
