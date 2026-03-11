@@ -4,6 +4,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import WhopEmbeddedCheckoutCard from "@/components/billing/WhopEmbeddedCheckoutCard";
 
+type BillingAddress = {
+  name: string;
+  country: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+};
+
 type PlanFeature = {
   label: string;
   included: boolean;
@@ -35,11 +45,27 @@ const parseError = async (response: Response): Promise<string> => {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export default function BillingSelectClient({ email }: { email: string }) {
+export default function BillingSelectClient({
+  email,
+  billingAddress,
+}: {
+  email: string;
+  billingAddress?: BillingAddress | null;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const requestedPlanKey = useMemo(() => {
+    const raw = searchParams.get("plan");
+    if (raw === "starter" || raw === "growth" || raw === "unlimited") {
+      return raw;
+    }
+
+    return null;
+  }, [searchParams]);
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [selectedPlanKey, setSelectedPlanKey] = useState<string>("starter");
+  const [selectedPlanKey, setSelectedPlanKey] = useState<string>(
+    requestedPlanKey ?? "starter"
+  );
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [plansLoading, setPlansLoading] = useState(true);
   const [sessionLoading, setSessionLoading] = useState(true);
@@ -60,14 +86,13 @@ export default function BillingSelectClient({ email }: { email: string }) {
   }, [searchParams]);
 
   useEffect(() => {
-    const raw = searchParams.get("intent");
-    if (raw === "plan_change" || raw === "account_limit_upgrade") {
-      const requestedPlan = searchParams.get("plan");
-      if (requestedPlan) {
-        setSelectedPlanKey(requestedPlan);
-      }
+    if (
+      (intent === "plan_change" || intent === "account_limit_upgrade") &&
+      requestedPlanKey
+    ) {
+      setSelectedPlanKey(requestedPlanKey);
     }
-  }, [searchParams]);
+  }, [intent, requestedPlanKey]);
 
   useEffect(() => {
     let cancelled = false;
@@ -161,12 +186,12 @@ export default function BillingSelectClient({ email }: { email: string }) {
   );
 
   useEffect(() => {
-    if (!selectedPlanKey || plansLoading) {
+    if (!selectedPlanKey) {
       return;
     }
 
     void loadCheckoutSession(selectedPlanKey);
-  }, [loadCheckoutSession, plansLoading, selectedPlanKey]);
+  }, [loadCheckoutSession, selectedPlanKey]);
 
   const headingText =
     intent === "plan_change"
@@ -181,12 +206,17 @@ export default function BillingSelectClient({ email }: { email: string }) {
     intent === "signup"
       ? "Free For 7 Days | Cancel Anytime"
       : intent === "plan_change"
-        ? "Select your new plan and complete payment below."
+        ? "Complete payment below to switch to your selected plan."
         : intent === "recover"
           ? "Complete payment below to restore your access."
           : "Upgrade to a higher plan to unlock more accounts.";
 
-  const showPlanSelection = intent !== "signup";
+  const showPlanSelection =
+    intent !== "signup" &&
+    !(
+      (intent === "plan_change" || intent === "account_limit_upgrade") &&
+      requestedPlanKey
+    );
   return (
     <div className="min-h-screen bg-gray-50 flex items-start justify-center px-4 py-12 sm:py-16">
       <div className="w-full max-w-5xl">
@@ -264,6 +294,7 @@ export default function BillingSelectClient({ email }: { email: string }) {
               <WhopEmbeddedCheckoutCard
                 sessionId={sessionId}
                 email={email}
+                billingAddress={billingAddress}
                 onComplete={() => {
                   void waitForActivation();
                 }}
