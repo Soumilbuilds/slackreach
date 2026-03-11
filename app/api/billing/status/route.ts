@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireApiUser } from "@/lib/auth";
 import { syncUserBillingState } from "@/lib/billing";
 import { isWhopReady } from "@/lib/whop";
+import { WHOP_PLAN_ID_STARTER_NO_TRIAL } from "@/lib/whop-config";
 
 export async function GET(request: NextRequest) {
   const authResult = await requireApiUser(request);
@@ -29,10 +30,16 @@ export async function GET(request: NextRequest) {
   }
 
   const billing = await syncUserBillingState(authResult.user);
+  const membershipStatus =
+    billing.membershipStatus === "trialing" &&
+    billing.planKey === "starter" &&
+    billing.whopPlanId === WHOP_PLAN_ID_STARTER_NO_TRIAL
+      ? "active"
+      : billing.membershipStatus;
 
   return NextResponse.json({
-    status: billing.membershipStatus ?? "none",
-    membershipStatus: billing.membershipStatus,
+    status: membershipStatus ?? "none",
+    membershipStatus,
     paymentStatus: billing.payment?.status ?? authResult.user.whopLastPaymentStatus ?? null,
     paymentSubstatus:
       billing.payment?.substatus ?? authResult.user.whopLastPaymentSubstatus ?? null,
