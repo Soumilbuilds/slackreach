@@ -46,6 +46,8 @@ export default function Sidebar() {
       <div className="border-t border-gray-200 px-3 py-3 space-y-2">
         <a
           href="https://slackreach.com/review"
+          target="_blank"
+          rel="noreferrer"
           className="block rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
         >
           Free $190 Coupon
