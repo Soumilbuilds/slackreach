@@ -99,6 +99,8 @@ export const UserScalarFieldEnum = {
   whopLastInvoiceId: 'whopLastInvoiceId',
   whopLastInvoiceStatus: 'whopLastInvoiceStatus',
   whopLastInvoiceToken: 'whopLastInvoiceToken',
+  leadConnectorTrialStartedAt: 'leadConnectorTrialStartedAt',
+  leadConnectorTrialStartedPaymentId: 'leadConnectorTrialStartedPaymentId',
   subscriptionPlanKey: 'subscriptionPlanKey',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

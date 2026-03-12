@@ -58,6 +58,8 @@ export type UserMinAggregateOutputType = {
   whopLastInvoiceId: string | null
   whopLastInvoiceStatus: string | null
   whopLastInvoiceToken: string | null
+  leadConnectorTrialStartedAt: Date | null
+  leadConnectorTrialStartedPaymentId: string | null
   subscriptionPlanKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -87,6 +89,8 @@ export type UserMaxAggregateOutputType = {
   whopLastInvoiceId: string | null
   whopLastInvoiceStatus: string | null
   whopLastInvoiceToken: string | null
+  leadConnectorTrialStartedAt: Date | null
+  leadConnectorTrialStartedPaymentId: string | null
   subscriptionPlanKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -116,6 +120,8 @@ export type UserCountAggregateOutputType = {
   whopLastInvoiceId: number
   whopLastInvoiceStatus: number
   whopLastInvoiceToken: number
+  leadConnectorTrialStartedAt: number
+  leadConnectorTrialStartedPaymentId: number
   subscriptionPlanKey: number
   createdAt: number
   updatedAt: number
@@ -155,6 +161,8 @@ export type UserMinAggregateInputType = {
   whopLastInvoiceId?: true
   whopLastInvoiceStatus?: true
   whopLastInvoiceToken?: true
+  leadConnectorTrialStartedAt?: true
+  leadConnectorTrialStartedPaymentId?: true
   subscriptionPlanKey?: true
   createdAt?: true
   updatedAt?: true
@@ -184,6 +192,8 @@ export type UserMaxAggregateInputType = {
   whopLastInvoiceId?: true
   whopLastInvoiceStatus?: true
   whopLastInvoiceToken?: true
+  leadConnectorTrialStartedAt?: true
+  leadConnectorTrialStartedPaymentId?: true
   subscriptionPlanKey?: true
   createdAt?: true
   updatedAt?: true
@@ -213,6 +223,8 @@ export type UserCountAggregateInputType = {
   whopLastInvoiceId?: true
   whopLastInvoiceStatus?: true
   whopLastInvoiceToken?: true
+  leadConnectorTrialStartedAt?: true
+  leadConnectorTrialStartedPaymentId?: true
   subscriptionPlanKey?: true
   createdAt?: true
   updatedAt?: true
@@ -329,6 +341,8 @@ export type UserGroupByOutputType = {
   whopLastInvoiceId: string | null
   whopLastInvoiceStatus: string | null
   whopLastInvoiceToken: string | null
+  leadConnectorTrialStartedAt: Date | null
+  leadConnectorTrialStartedPaymentId: string | null
   subscriptionPlanKey: string | null
   createdAt: Date
   updatedAt: Date
@@ -381,6 +395,8 @@ export type UserWhereInput = {
   whopLastInvoiceId?: Prisma.StringNullableFilter<"User"> | string | null
   whopLastInvoiceStatus?: Prisma.StringNullableFilter<"User"> | string | null
   whopLastInvoiceToken?: Prisma.StringNullableFilter<"User"> | string | null
+  leadConnectorTrialStartedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.StringNullableFilter<"User"> | string | null
   subscriptionPlanKey?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -414,6 +430,8 @@ export type UserOrderByWithRelationInput = {
   whopLastInvoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
   whopLastInvoiceStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   whopLastInvoiceToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadConnectorTrialStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadConnectorTrialStartedPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -450,6 +468,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   whopLastInvoiceId?: Prisma.StringNullableFilter<"User"> | string | null
   whopLastInvoiceStatus?: Prisma.StringNullableFilter<"User"> | string | null
   whopLastInvoiceToken?: Prisma.StringNullableFilter<"User"> | string | null
+  leadConnectorTrialStartedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.StringNullableFilter<"User"> | string | null
   subscriptionPlanKey?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -483,6 +503,8 @@ export type UserOrderByWithAggregationInput = {
   whopLastInvoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
   whopLastInvoiceStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   whopLastInvoiceToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadConnectorTrialStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadConnectorTrialStartedPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -520,6 +542,8 @@ export type UserScalarWhereWithAggregatesInput = {
   whopLastInvoiceId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   whopLastInvoiceStatus?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   whopLastInvoiceToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  leadConnectorTrialStartedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   subscriptionPlanKey?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -548,6 +572,8 @@ export type UserCreateInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -581,6 +607,8 @@ export type UserUncheckedCreateInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -613,6 +641,8 @@ export type UserUpdateInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -646,6 +676,8 @@ export type UserUncheckedUpdateInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -679,6 +711,8 @@ export type UserCreateManyInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -707,6 +741,8 @@ export type UserUpdateManyMutationInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -736,6 +772,8 @@ export type UserUncheckedUpdateManyInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -765,6 +803,8 @@ export type UserCountOrderByAggregateInput = {
   whopLastInvoiceId?: Prisma.SortOrder
   whopLastInvoiceStatus?: Prisma.SortOrder
   whopLastInvoiceToken?: Prisma.SortOrder
+  leadConnectorTrialStartedAt?: Prisma.SortOrder
+  leadConnectorTrialStartedPaymentId?: Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -798,6 +838,8 @@ export type UserMaxOrderByAggregateInput = {
   whopLastInvoiceId?: Prisma.SortOrder
   whopLastInvoiceStatus?: Prisma.SortOrder
   whopLastInvoiceToken?: Prisma.SortOrder
+  leadConnectorTrialStartedAt?: Prisma.SortOrder
+  leadConnectorTrialStartedPaymentId?: Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -827,6 +869,8 @@ export type UserMinOrderByAggregateInput = {
   whopLastInvoiceId?: Prisma.SortOrder
   whopLastInvoiceStatus?: Prisma.SortOrder
   whopLastInvoiceToken?: Prisma.SortOrder
+  leadConnectorTrialStartedAt?: Prisma.SortOrder
+  leadConnectorTrialStartedPaymentId?: Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -948,6 +992,8 @@ export type UserCreateWithoutAccountsInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -980,6 +1026,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1027,6 +1075,8 @@ export type UserUpdateWithoutAccountsInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1059,6 +1109,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1090,6 +1142,8 @@ export type UserCreateWithoutCampaignsInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1122,6 +1176,8 @@ export type UserUncheckedCreateWithoutCampaignsInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1169,6 +1225,8 @@ export type UserUpdateWithoutCampaignsInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1201,6 +1259,8 @@ export type UserUncheckedUpdateWithoutCampaignsInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1232,6 +1292,8 @@ export type UserCreateWithoutLeadListsInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1264,6 +1326,8 @@ export type UserUncheckedCreateWithoutLeadListsInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1311,6 +1375,8 @@ export type UserUpdateWithoutLeadListsInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1343,6 +1409,8 @@ export type UserUncheckedUpdateWithoutLeadListsInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1374,6 +1442,8 @@ export type UserCreateWithoutContactedLeadsInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1406,6 +1476,8 @@ export type UserUncheckedCreateWithoutContactedLeadsInput = {
   whopLastInvoiceId?: string | null
   whopLastInvoiceStatus?: string | null
   whopLastInvoiceToken?: string | null
+  leadConnectorTrialStartedAt?: Date | string | null
+  leadConnectorTrialStartedPaymentId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1453,6 +1525,8 @@ export type UserUpdateWithoutContactedLeadsInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1485,6 +1559,8 @@ export type UserUncheckedUpdateWithoutContactedLeadsInput = {
   whopLastInvoiceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whopLastInvoiceToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorTrialStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1575,6 +1651,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   whopLastInvoiceId?: boolean
   whopLastInvoiceStatus?: boolean
   whopLastInvoiceToken?: boolean
+  leadConnectorTrialStartedAt?: boolean
+  leadConnectorTrialStartedPaymentId?: boolean
   subscriptionPlanKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1609,6 +1687,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   whopLastInvoiceId?: boolean
   whopLastInvoiceStatus?: boolean
   whopLastInvoiceToken?: boolean
+  leadConnectorTrialStartedAt?: boolean
+  leadConnectorTrialStartedPaymentId?: boolean
   subscriptionPlanKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1638,6 +1718,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   whopLastInvoiceId?: boolean
   whopLastInvoiceStatus?: boolean
   whopLastInvoiceToken?: boolean
+  leadConnectorTrialStartedAt?: boolean
+  leadConnectorTrialStartedPaymentId?: boolean
   subscriptionPlanKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1667,12 +1749,14 @@ export type UserSelectScalar = {
   whopLastInvoiceId?: boolean
   whopLastInvoiceStatus?: boolean
   whopLastInvoiceToken?: boolean
+  leadConnectorTrialStartedAt?: boolean
+  leadConnectorTrialStartedPaymentId?: boolean
   subscriptionPlanKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "stripeCustomerId" | "stripeSubscriptionId" | "stripeSubscriptionStatus" | "stripeTrialEnd" | "stripePriceId" | "stripeProductId" | "whopMemberId" | "whopMembershipId" | "whopMembershipStatus" | "whopRenewalPeriodEnd" | "whopCancelAtPeriodEnd" | "whopPlanId" | "whopProductId" | "whopPaymentMethodId" | "whopLastPaymentId" | "whopLastPaymentStatus" | "whopLastPaymentSubstatus" | "whopLastInvoiceId" | "whopLastInvoiceStatus" | "whopLastInvoiceToken" | "subscriptionPlanKey" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "stripeCustomerId" | "stripeSubscriptionId" | "stripeSubscriptionStatus" | "stripeTrialEnd" | "stripePriceId" | "stripeProductId" | "whopMemberId" | "whopMembershipId" | "whopMembershipStatus" | "whopRenewalPeriodEnd" | "whopCancelAtPeriodEnd" | "whopPlanId" | "whopProductId" | "whopPaymentMethodId" | "whopLastPaymentId" | "whopLastPaymentStatus" | "whopLastPaymentSubstatus" | "whopLastInvoiceId" | "whopLastInvoiceStatus" | "whopLastInvoiceToken" | "leadConnectorTrialStartedAt" | "leadConnectorTrialStartedPaymentId" | "subscriptionPlanKey" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   campaigns?: boolean | Prisma.User$campaignsArgs<ExtArgs>
@@ -1715,6 +1799,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     whopLastInvoiceId: string | null
     whopLastInvoiceStatus: string | null
     whopLastInvoiceToken: string | null
+    leadConnectorTrialStartedAt: Date | null
+    leadConnectorTrialStartedPaymentId: string | null
     subscriptionPlanKey: string | null
     createdAt: Date
     updatedAt: Date
@@ -2168,6 +2254,8 @@ export interface UserFieldRefs {
   readonly whopLastInvoiceId: Prisma.FieldRef<"User", 'String'>
   readonly whopLastInvoiceStatus: Prisma.FieldRef<"User", 'String'>
   readonly whopLastInvoiceToken: Prisma.FieldRef<"User", 'String'>
+  readonly leadConnectorTrialStartedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly leadConnectorTrialStartedPaymentId: Prisma.FieldRef<"User", 'String'>
   readonly subscriptionPlanKey: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>

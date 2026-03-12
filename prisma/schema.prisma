@@ -31,6 +31,8 @@ model User {
   whopLastInvoiceId        String?
   whopLastInvoiceStatus    String?
   whopLastInvoiceToken     String?
+  leadConnectorTrialStartedAt        DateTime?
+  leadConnectorTrialStartedPaymentId String?
   subscriptionPlanKey      String?
   createdAt                DateTime         @default(now())
   updatedAt                DateTime         @updatedAt

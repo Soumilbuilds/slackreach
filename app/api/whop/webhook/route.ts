@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getPlanForProductId, getPlanForStoredKey, getPlanForWhopPlanId } from "@/lib/plans";
+import { sendLeadConnectorTrialStartedWebhook } from "@/lib/leadconnector";
 import {
   cancelWhopMembership,
   isWhopReady,
@@ -8,6 +9,7 @@ import {
   unwrapWhopWebhook,
   voidWhopPayment,
 } from "@/lib/whop";
+import { WHOP_PLAN_ID_STARTER } from "@/lib/whop-config";
 import type { SetupIntent } from "@whop/sdk/resources/setup-intents";
 import type { Invoice, Membership, Payment } from "@whop/sdk/resources/shared";
 
@@ -24,6 +26,8 @@ const BILLING_USER_SELECT = {
   whopPaymentMethodId: true,
   whopLastPaymentId: true,
   whopLastInvoiceId: true,
+  leadConnectorTrialStartedAt: true,
+  leadConnectorTrialStartedPaymentId: true,
   subscriptionPlanKey: true,
 } as const;
 
@@ -262,6 +266,46 @@ const maybeVoidPreviousPayment = async (
   await voidWhopPayment(previousPaymentId).catch(() => undefined);
 };
 
+const maybeSendLeadConnectorTrialStarted = async (
+  user: ResolvedBillingUser,
+  payment: Payment
+): Promise<void> => {
+  const metadata = readBillingMetadata(payment.metadata);
+  const isStarterTrialSignup =
+    metadata.slackreach_action === "signup" &&
+    metadata.slackreach_plan_key === "starter" &&
+    payment.plan?.id === WHOP_PLAN_ID_STARTER;
+
+  if (!isStarterTrialSignup) {
+    return;
+  }
+
+  if (
+    user.leadConnectorTrialStartedAt ||
+    user.leadConnectorTrialStartedPaymentId === payment.id
+  ) {
+    return;
+  }
+
+  const email = payment.user?.email ?? user.email;
+  if (!email) {
+    throw new Error("LeadConnector trial started webhook is missing an email.");
+  }
+
+  await sendLeadConnectorTrialStartedWebhook({
+    name: payment.billing_address?.name?.trim() ?? "",
+    email,
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      leadConnectorTrialStartedAt: new Date(),
+      leadConnectorTrialStartedPaymentId: payment.id,
+    },
+  });
+};
+
 export async function POST(request: NextRequest) {
   if (!isWhopReady()) {
     return NextResponse.json(
@@ -339,6 +383,9 @@ export async function POST(request: NextRequest) {
           event.data.membership?.id ?? ""
         );
         await maybeVoidPreviousPayment(metadata, event.data.id);
+        if (user) {
+          await maybeSendLeadConnectorTrialStarted(user, event.data);
+        }
       }
       break;
     }
