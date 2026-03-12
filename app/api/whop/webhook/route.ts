@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getPlanForProductId, getPlanForStoredKey, getPlanForWhopPlanId } from "@/lib/plans";
-import { sendLeadConnectorTrialStartedWebhook } from "@/lib/leadconnector";
+import {
+  sendLeadConnectorPlanPaidWebhook,
+  sendLeadConnectorTrialStartedWebhook,
+} from "@/lib/leadconnector";
 import {
   cancelWhopMembership,
   isWhopReady,
@@ -28,8 +31,16 @@ const BILLING_USER_SELECT = {
   whopLastInvoiceId: true,
   leadConnectorTrialStartedAt: true,
   leadConnectorTrialStartedPaymentId: true,
+  leadConnectorPlanPaidAt: true,
+  leadConnectorPlanPaidPaymentId: true,
   subscriptionPlanKey: true,
 } as const;
+
+const LEADCONNECTOR_PLAN_PAID_ACTIONS = new Set([
+  "plan_change",
+  "account_limit_upgrade",
+  "recover",
+]);
 
 type BillingUser = Awaited<
   ReturnType<typeof prisma.user.findFirst<{ select: typeof BILLING_USER_SELECT }>>
@@ -306,6 +317,64 @@ const maybeSendLeadConnectorTrialStarted = async (
   });
 };
 
+const maybeSendLeadConnectorPlanPaid = async (
+  user: ResolvedBillingUser,
+  payment: Payment
+): Promise<void> => {
+  if (payment.status !== "paid" || payment.substatus !== "succeeded") {
+    return;
+  }
+
+  if (user.leadConnectorPlanPaidPaymentId === payment.id) {
+    return;
+  }
+
+  const planKey = resolvePlanKey(
+    payment.plan?.id,
+    payment.product?.id,
+    user.subscriptionPlanKey
+  );
+  if (planKey !== "starter" && planKey !== "growth" && planKey !== "unlimited") {
+    return;
+  }
+
+  const metadata = readBillingMetadata(payment.metadata);
+  const action = metadata.slackreach_action;
+  const isExplicitUpgradeOrRecovery = action
+    ? LEADCONNECTOR_PLAN_PAID_ACTIONS.has(action)
+    : false;
+  const amountPaid = payment.total ?? payment.subtotal ?? 0;
+  const isFirstPaidStarterConversion =
+    !user.leadConnectorPlanPaidAt &&
+    planKey === "starter" &&
+    amountPaid > 0 &&
+    (payment.billing_reason === "subscription_cycle" ||
+      payment.billing_reason === "subscription_create" ||
+      payment.billing_reason === "subscription");
+
+  if (!isExplicitUpgradeOrRecovery && !isFirstPaidStarterConversion) {
+    return;
+  }
+
+  const email = payment.user?.email ?? user.email;
+  if (!email) {
+    throw new Error("LeadConnector plan paid webhook is missing an email.");
+  }
+
+  await sendLeadConnectorPlanPaidWebhook({
+    email,
+    plan: planKey,
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      leadConnectorPlanPaidAt: new Date(),
+      leadConnectorPlanPaidPaymentId: payment.id,
+    },
+  });
+};
+
 export async function POST(request: NextRequest) {
   if (!isWhopReady()) {
     return NextResponse.json(
@@ -385,6 +454,7 @@ export async function POST(request: NextRequest) {
         await maybeVoidPreviousPayment(metadata, event.data.id);
         if (user) {
           await maybeSendLeadConnectorTrialStarted(user, event.data);
+          await maybeSendLeadConnectorPlanPaid(user, event.data);
         }
       }
       break;

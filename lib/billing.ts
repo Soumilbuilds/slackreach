@@ -1,7 +1,10 @@
 import prisma from "@/lib/db";
 import { type AuthenticatedUser } from "@/lib/auth";
 import type { Invoice, Membership, Payment } from "@whop/sdk/resources/shared";
-import { sendLeadConnectorTrialStartedWebhook } from "@/lib/leadconnector";
+import {
+  sendLeadConnectorPlanPaidWebhook,
+  sendLeadConnectorTrialStartedWebhook,
+} from "@/lib/leadconnector";
 import {
   isWhopReady,
   readBillingMetadata,
@@ -26,6 +29,11 @@ const BILLING_ISSUE_STATUSES = new Set([
   "unresolved",
   "canceled",
   "expired",
+]);
+const LEADCONNECTOR_PLAN_PAID_ACTIONS = new Set([
+  "plan_change",
+  "account_limit_upgrade",
+  "recover",
 ]);
 
 const MEMBERSHIP_STATUS_PRIORITY: Record<string, number> = {
@@ -271,6 +279,64 @@ const maybeBackfillLeadConnectorTrialStarted = async (
   });
 };
 
+const maybeBackfillLeadConnectorPlanPaid = async (
+  user: AuthenticatedUser,
+  payment: Payment | null,
+  planKey: PlanKey | null
+): Promise<void> => {
+  if (!payment || !planKey) {
+    return;
+  }
+
+  if (payment.status !== "paid" || payment.substatus !== "succeeded") {
+    return;
+  }
+
+  if (user.leadConnectorPlanPaidPaymentId === payment.id) {
+    return;
+  }
+
+  if (planKey !== "starter" && planKey !== "growth" && planKey !== "unlimited") {
+    return;
+  }
+
+  const metadata = readBillingMetadata(payment.metadata);
+  const action = metadata.slackreach_action;
+  const isExplicitUpgradeOrRecovery = action
+    ? LEADCONNECTOR_PLAN_PAID_ACTIONS.has(action)
+    : false;
+  const amountPaid = payment.total ?? payment.subtotal ?? 0;
+  const isFirstPaidStarterConversion =
+    !user.leadConnectorPlanPaidAt &&
+    planKey === "starter" &&
+    amountPaid > 0 &&
+    (payment.billing_reason === "subscription_cycle" ||
+      payment.billing_reason === "subscription_create" ||
+      payment.billing_reason === "subscription");
+
+  if (!isExplicitUpgradeOrRecovery && !isFirstPaidStarterConversion) {
+    return;
+  }
+
+  const email = payment.user?.email ?? user.email;
+  if (!email) {
+    return;
+  }
+
+  await sendLeadConnectorPlanPaidWebhook({
+    email,
+    plan: planKey,
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      leadConnectorPlanPaidAt: new Date(),
+      leadConnectorPlanPaidPaymentId: payment.id,
+    },
+  });
+};
+
 export const syncUserBillingState = async (
   user: AuthenticatedUser
 ): Promise<BillingSyncResult> => {
@@ -348,6 +414,7 @@ export const syncUserBillingState = async (
   });
 
   await maybeBackfillLeadConnectorTrialStarted(user, payment, planDetails.planKey);
+  await maybeBackfillLeadConnectorPlanPaid(user, payment, planDetails.planKey);
 
   return {
     memberId,
