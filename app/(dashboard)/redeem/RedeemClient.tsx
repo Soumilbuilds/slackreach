@@ -166,49 +166,21 @@ export default function RedeemClient({
         <div className="mb-8 grid gap-3 md:grid-cols-3">
           {plans.map((plan) => {
             const isSelected = selectedPlanKey === plan.key;
-            const isCurrentPlan = currentPlanKey === plan.key;
-            const isStarterTrialCard =
-              isCurrentPlan &&
-              plan.key === "starter" &&
-              currentMembershipStatus === "trialing";
 
             return (
               <button
                 key={plan.key}
                 type="button"
                 onClick={() => setSelectedPlanKey(plan.key)}
-                className={`rounded-xl border bg-white p-5 text-left transition-colors ${
+                className={`flex min-h-[96px] items-center justify-center rounded-xl border bg-white px-6 py-5 transition-colors ${
                   isSelected
                     ? "border-gray-900 shadow-sm"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-base font-semibold text-gray-900">
-                      {plan.name}
-                    </p>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {plan.accountLimit == null
-                        ? "Unlimited accounts"
-                        : `${plan.accountLimit} account${plan.accountLimit === 1 ? "" : "s"}`}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-semibold tracking-tight text-gray-900">
-                      ${plan.monthlyPriceUsd}
-                    </p>
-                    <p className="text-xs text-gray-400">/month</p>
-                  </div>
-                </div>
-
-                {(isCurrentPlan || isStarterTrialCard) && (
-                  <div className="mt-4">
-                    <span className="inline-flex rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-600">
-                      {isStarterTrialCard ? "Current trial" : "Current plan"}
-                    </span>
-                  </div>
-                )}
+                <span className="text-lg font-semibold tracking-tight text-gray-900">
+                  {plan.name}
+                </span>
               </button>
             );
           })}
@@ -227,10 +199,6 @@ export default function RedeemClient({
         )}
 
         <div className="mx-auto max-w-2xl">
-          <p className="mb-4 text-center text-sm text-gray-500">
-            Enter your coupon code directly in checkout before confirming payment.
-          </p>
-
           {!canOpenCheckout ? (
             <div className="flex min-h-[320px] items-center justify-center rounded-lg border border-gray-200 bg-white px-6">
               <p className="max-w-md text-center text-sm text-gray-500">
