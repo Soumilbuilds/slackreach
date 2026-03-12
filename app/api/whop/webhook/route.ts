@@ -78,6 +78,16 @@ const parseUserId = (value: string | undefined): number | null => {
   return Number.isInteger(id) && id > 0 ? id : null;
 };
 
+const normalizeDeactivatedMembershipStatus = (
+  status: Membership["status"]
+): Membership["status"] =>
+  status === "canceled" ||
+  status === "expired" ||
+  status === "past_due" ||
+  status === "unresolved"
+    ? status
+    : "canceled";
+
 const findBillingUser = async (params: {
   metadata?: Record<string, unknown> | null;
   email?: string | null;
@@ -384,15 +394,7 @@ const maybeSendLeadConnectorMembershipEnded = async (
   membership: Membership
 ): Promise<void> => {
   const endedStatus =
-    membership.status === "canceled"
-      ? "canceled"
-      : membership.status === "expired"
-        ? "expired"
-        : null;
-
-  if (!endedStatus) {
-    return;
-  }
+    membership.status === "expired" ? "expired" : "canceled";
 
   if (user.leadConnectorMembershipEndedMembershipId === membership.id) {
     return;
@@ -488,14 +490,22 @@ export async function POST(request: NextRequest) {
         memberId: event.data.member?.id,
       });
 
+      const membershipForStorage =
+        event.type === "membership.deactivated"
+          ? {
+              ...event.data,
+              status: normalizeDeactivatedMembershipStatus(event.data.status),
+            }
+          : event.data;
+
       if (user) {
-        await applyMembershipUpdate(user, event.data);
+        await applyMembershipUpdate(user, membershipForStorage);
       }
 
       if (event.type === "membership.activated") {
         await maybeCancelPreviousMembership(metadata, event.data.id);
       } else if (event.type === "membership.deactivated" && user) {
-        await maybeSendLeadConnectorMembershipEnded(user, event.data);
+        await maybeSendLeadConnectorMembershipEnded(user, membershipForStorage);
       }
       break;
     }
