@@ -1,9 +1,23 @@
-export const WHOP_API_KEY = process.env.WHOP_API_KEY ?? "";
-export const WHOP_COMPANY_ID = process.env.WHOP_COMPANY_ID ?? "";
-export const WHOP_WEBHOOK_SECRET = process.env.WHOP_WEBHOOK_SECRET ?? "";
+const readEnv = (key: string): string => {
+  const value = process.env[key] ?? "";
+  const trimmed = value.trim();
+
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+
+  return trimmed;
+};
+
+export const WHOP_API_KEY = readEnv("WHOP_API_KEY");
+export const WHOP_COMPANY_ID = readEnv("WHOP_COMPANY_ID");
+export const WHOP_WEBHOOK_SECRET = readEnv("WHOP_WEBHOOK_SECRET");
 export const WHOP_ENVIRONMENT =
   process.env.WHOP_ENVIRONMENT === "sandbox" ? "sandbox" : "production";
-export const APP_BASE_URL = process.env.APP_BASE_URL ?? "http://localhost:3000";
+export const APP_BASE_URL = readEnv("APP_BASE_URL") || "http://localhost:3000";
 
 export const WHOP_PRODUCT_ID = "prod_dykz42RsTpcMC";
 export const WHOP_PLAN_ID_STARTER = "plan_TIrQGsxQD2IWT";

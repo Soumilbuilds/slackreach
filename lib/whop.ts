@@ -51,6 +51,9 @@ const BILLING_PAYMENT_STATUS_PRIORITY: Record<string, number> = {
 const isConfiguredValue = (value: string): boolean =>
   Boolean(value.trim()) && !value.startsWith("REPLACE_WITH_");
 
+const encodeWhopWebhookKey = (value: string): string =>
+  Buffer.from(value, "utf8").toString("base64");
+
 const normalizeEmail = (value: string): string => value.trim().toLowerCase();
 
 const toTimestamp = (value: string | null | undefined): number => {
@@ -140,7 +143,10 @@ const getWhopClient = (): Whop => {
   }
 
   if (!whopClient) {
-    whopClient = new Whop({ apiKey: WHOP_API_KEY });
+    whopClient = new Whop({
+      apiKey: WHOP_API_KEY,
+      webhookKey: encodeWhopWebhookKey(WHOP_WEBHOOK_SECRET),
+    });
   }
 
   return whopClient;
@@ -346,7 +352,4 @@ export const unwrapWhopWebhook = (
   body: string,
   headers: Record<string, string>
 ): UnwrapWebhookEvent =>
-  getWhopClient().webhooks.unwrap(body, {
-    headers,
-    key: WHOP_WEBHOOK_SECRET || undefined,
-  });
+  getWhopClient().webhooks.unwrap(body, { headers });
