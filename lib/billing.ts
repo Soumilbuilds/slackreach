@@ -33,6 +33,7 @@ const BILLING_ISSUE_STATUSES = new Set([
 ]);
 const LEADCONNECTOR_PLAN_PAID_ACTIONS = new Set([
   "plan_change",
+  "redeem",
   "account_limit_upgrade",
   "recover",
 ]);

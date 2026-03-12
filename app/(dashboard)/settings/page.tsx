@@ -102,45 +102,13 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <div
-        style={{
-          marginBottom: "32px",
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: "16px",
-        }}
-      >
-        <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
-            Settings
-          </h2>
-          <p style={{ marginTop: "4px", fontSize: "14px", color: "#6b7280" }}>
-            Manage your account and subscription.
-          </p>
-        </div>
-
-        <a
-          href="https://slackreach.com/review"
-          target="_blank"
-          rel="noreferrer"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "9999px",
-            backgroundColor: "#111827",
-            padding: "10px 14px",
-            fontSize: "12px",
-            fontWeight: 600,
-            color: "#ffffff",
-            textDecoration: "none",
-            whiteSpace: "nowrap",
-            boxShadow: "0 1px 2px rgba(17, 24, 39, 0.12)",
-          }}
-        >
-          Free $195 Coupon
-        </a>
+      <div style={{ marginBottom: "32px" }}>
+        <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
+          Settings
+        </h2>
+        <p style={{ marginTop: "4px", fontSize: "14px", color: "#6b7280" }}>
+          Manage your account and subscription.
+        </p>
       </div>
 
       <div style={{ maxWidth: "672px", display: "flex", flexDirection: "column", gap: "24px" }}>

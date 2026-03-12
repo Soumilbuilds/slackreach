@@ -10,6 +10,13 @@ const navItems = [
   { label: "Plans", href: "/plans" },
 ];
 
+const getNavItemClassName = (isActive: boolean): string =>
+  `block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+    isActive
+      ? "bg-gray-100 text-gray-900"
+      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+  }`;
+
 export default function Sidebar() {
   const pathname = usePathname();
 
@@ -28,11 +35,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
+              className={getNavItemClassName(isActive)}
             >
               {item.label}
             </Link>
@@ -40,14 +43,20 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-gray-200 px-3 py-3">
+      <div className="border-t border-gray-200 px-3 py-3 space-y-2">
+        <Link
+          href="/redeem"
+          className={`block rounded-md px-3 py-2 text-sm font-semibold transition-colors ${
+            pathname.startsWith("/redeem")
+              ? "bg-gray-900 text-white"
+              : "bg-gray-900 text-white hover:bg-gray-800"
+          }`}
+        >
+          Free $195 Coupon
+        </Link>
         <Link
           href="/settings"
-          className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-            pathname.startsWith("/settings")
-              ? "bg-gray-100 text-gray-900"
-              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-          }`}
+          className={getNavItemClassName(pathname.startsWith("/settings"))}
         >
           Settings
         </Link>

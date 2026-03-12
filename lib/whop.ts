@@ -17,6 +17,7 @@ type CheckoutAction =
   | "signup"
   | "recover"
   | "plan_change"
+  | "redeem"
   | "account_limit_upgrade";
 
 type BillingMetadata = {

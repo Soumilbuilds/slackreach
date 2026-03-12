@@ -8,12 +8,20 @@ import {
   isWhopReady,
 } from "@/lib/whop";
 
-type CheckoutIntent = "signup" | "recover" | "plan_change" | "account_limit_upgrade";
+const ACCESS_ALLOWED_STATUSES = new Set(["active", "trialing", "canceling"]);
+
+type CheckoutIntent =
+  | "signup"
+  | "recover"
+  | "plan_change"
+  | "redeem"
+  | "account_limit_upgrade";
 
 const parseCheckoutIntent = (value: unknown): CheckoutIntent => {
   switch (value) {
     case "recover":
     case "plan_change":
+    case "redeem":
     case "account_limit_upgrade":
       return value;
     default:
@@ -49,6 +57,37 @@ export async function POST(request: NextRequest) {
   }
 
   const billing = await syncUserBillingState(authResult.user);
+
+  if (intent === "redeem") {
+    if (
+      !billing.membershipStatus ||
+      !ACCESS_ALLOWED_STATUSES.has(billing.membershipStatus)
+    ) {
+      return NextResponse.json(
+        {
+          error: "You need an active trial or subscription to redeem a coupon.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const isSamePlan = billing.planKey === planKey;
+    const isStarterTrialConversion =
+      isSamePlan &&
+      planKey === "starter" &&
+      billing.membershipStatus === "trialing";
+
+    if (isSamePlan && !isStarterTrialConversion) {
+      return NextResponse.json(
+        {
+          error:
+            "Your current plan is already active. Choose a different plan to continue.",
+        },
+        { status: 400 }
+      );
+    }
+  }
+
   const session = await createWhopCheckoutSession({
     planId: plan.whopPlanId,
     metadata: buildBillingMetadata({
