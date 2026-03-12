@@ -1,13 +1,16 @@
 import prisma from "@/lib/db";
 import { type AuthenticatedUser } from "@/lib/auth";
 import type { Invoice, Membership, Payment } from "@whop/sdk/resources/shared";
+import { sendLeadConnectorTrialStartedWebhook } from "@/lib/leadconnector";
 import {
   isWhopReady,
+  readBillingMetadata,
   recoverWhopBillingStateByEmail,
   retrieveWhopInvoice,
   retrieveWhopMembership,
   retrieveWhopPayment,
 } from "@/lib/whop";
+import { WHOP_PLAN_ID_STARTER } from "@/lib/whop-config";
 import {
   getBillingPlan,
   getPlanForProductId,
@@ -220,6 +223,54 @@ const updateStoredWhopState = async (
   });
 };
 
+const maybeBackfillLeadConnectorTrialStarted = async (
+  user: AuthenticatedUser,
+  payment: Payment | null,
+  planKey: PlanKey | null
+): Promise<void> => {
+  if (!payment) {
+    return;
+  }
+
+  const metadata = readBillingMetadata(payment.metadata);
+  const isStarterTrialSignup =
+    metadata.slackreach_action === "signup" &&
+    metadata.slackreach_plan_key === "starter" &&
+    planKey === "starter" &&
+    payment.plan?.id === WHOP_PLAN_ID_STARTER &&
+    payment.status === "paid" &&
+    payment.substatus === "succeeded";
+
+  if (!isStarterTrialSignup) {
+    return;
+  }
+
+  if (
+    user.leadConnectorTrialStartedAt ||
+    user.leadConnectorTrialStartedPaymentId === payment.id
+  ) {
+    return;
+  }
+
+  const email = payment.user?.email ?? user.email;
+  if (!email) {
+    return;
+  }
+
+  await sendLeadConnectorTrialStartedWebhook({
+    name: payment.billing_address?.name?.trim() ?? "",
+    email,
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      leadConnectorTrialStartedAt: new Date(),
+      leadConnectorTrialStartedPaymentId: payment.id,
+    },
+  });
+};
+
 export const syncUserBillingState = async (
   user: AuthenticatedUser
 ): Promise<BillingSyncResult> => {
@@ -295,6 +346,8 @@ export const syncUserBillingState = async (
     paymentMethodId,
     planDetails,
   });
+
+  await maybeBackfillLeadConnectorTrialStarted(user, payment, planDetails.planKey);
 
   return {
     memberId,
