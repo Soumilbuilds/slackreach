@@ -173,6 +173,8 @@ export type AuthenticatedUser = {
   leadConnectorTrialStartedPaymentId: string | null;
   leadConnectorPlanPaidAt: Date | null;
   leadConnectorPlanPaidPaymentId: string | null;
+  leadConnectorMembershipEndedAt: Date | null;
+  leadConnectorMembershipEndedMembershipId: string | null;
   subscriptionPlanKey: string | null;
 };
 
@@ -197,6 +199,8 @@ const mapUser = (user: {
   leadConnectorTrialStartedPaymentId: string | null;
   leadConnectorPlanPaidAt: Date | null;
   leadConnectorPlanPaidPaymentId: string | null;
+  leadConnectorMembershipEndedAt: Date | null;
+  leadConnectorMembershipEndedMembershipId: string | null;
   subscriptionPlanKey: string | null;
 }): AuthenticatedUser => ({
   id: user.id,
@@ -219,6 +223,9 @@ const mapUser = (user: {
   leadConnectorTrialStartedPaymentId: user.leadConnectorTrialStartedPaymentId,
   leadConnectorPlanPaidAt: user.leadConnectorPlanPaidAt,
   leadConnectorPlanPaidPaymentId: user.leadConnectorPlanPaidPaymentId,
+  leadConnectorMembershipEndedAt: user.leadConnectorMembershipEndedAt,
+  leadConnectorMembershipEndedMembershipId:
+    user.leadConnectorMembershipEndedMembershipId,
   subscriptionPlanKey: user.subscriptionPlanKey,
 });
 
@@ -258,6 +265,8 @@ export const getCurrentUserFromRequest = async (
       leadConnectorTrialStartedPaymentId: true,
       leadConnectorPlanPaidAt: true,
       leadConnectorPlanPaidPaymentId: true,
+      leadConnectorMembershipEndedAt: true,
+      leadConnectorMembershipEndedMembershipId: true,
       subscriptionPlanKey: true,
     },
   });
@@ -305,6 +314,8 @@ export const getCurrentUserFromCookies = async (): Promise<AuthenticatedUser | n
       leadConnectorTrialStartedPaymentId: true,
       leadConnectorPlanPaidAt: true,
       leadConnectorPlanPaidPaymentId: true,
+      leadConnectorMembershipEndedAt: true,
+      leadConnectorMembershipEndedMembershipId: true,
       subscriptionPlanKey: true,
     },
   });

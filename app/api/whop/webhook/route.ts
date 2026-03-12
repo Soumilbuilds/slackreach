@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getPlanForProductId, getPlanForStoredKey, getPlanForWhopPlanId } from "@/lib/plans";
 import {
+  sendLeadConnectorMembershipEndedWebhook,
   sendLeadConnectorPlanPaidWebhook,
   sendLeadConnectorTrialStartedWebhook,
 } from "@/lib/leadconnector";
@@ -9,6 +10,7 @@ import {
   cancelWhopMembership,
   isWhopReady,
   readBillingMetadata,
+  recoverWhopBillingStateByEmail,
   unwrapWhopWebhook,
   voidWhopPayment,
 } from "@/lib/whop";
@@ -33,6 +35,8 @@ const BILLING_USER_SELECT = {
   leadConnectorTrialStartedPaymentId: true,
   leadConnectorPlanPaidAt: true,
   leadConnectorPlanPaidPaymentId: true,
+  leadConnectorMembershipEndedAt: true,
+  leadConnectorMembershipEndedMembershipId: true,
   subscriptionPlanKey: true,
 } as const;
 
@@ -375,6 +379,70 @@ const maybeSendLeadConnectorPlanPaid = async (
   });
 };
 
+const maybeSendLeadConnectorMembershipEnded = async (
+  user: ResolvedBillingUser,
+  membership: Membership
+): Promise<void> => {
+  const endedStatus =
+    membership.status === "canceled"
+      ? "canceled"
+      : membership.status === "expired"
+        ? "expired"
+        : null;
+
+  if (!endedStatus) {
+    return;
+  }
+
+  if (user.leadConnectorMembershipEndedMembershipId === membership.id) {
+    return;
+  }
+
+  if (
+    user.whopMembershipId &&
+    user.whopMembershipId !== membership.id &&
+    ACCESS_ALLOWED_STATUSES.has(user.whopMembershipStatus ?? "")
+  ) {
+    return;
+  }
+
+  const email = membership.user?.email ?? user.email;
+  if (!email) {
+    throw new Error("LeadConnector membership ended webhook is missing an email.");
+  }
+
+  const recovered = await recoverWhopBillingStateByEmail(email).catch(() => null);
+  if (
+    recovered?.membership &&
+    recovered.membership.id !== membership.id &&
+    ACCESS_ALLOWED_STATUSES.has(recovered.membership.status)
+  ) {
+    return;
+  }
+
+  const planKey = resolvePlanKey(
+    membership.plan.id,
+    membership.product.id,
+    user.subscriptionPlanKey
+  );
+
+  await sendLeadConnectorMembershipEndedWebhook({
+    email,
+    status: endedStatus,
+    ...(planKey === "starter" || planKey === "growth" || planKey === "unlimited"
+      ? { plan: planKey }
+      : {}),
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      leadConnectorMembershipEndedAt: new Date(),
+      leadConnectorMembershipEndedMembershipId: membership.id,
+    },
+  });
+};
+
 export async function POST(request: NextRequest) {
   if (!isWhopReady()) {
     return NextResponse.json(
@@ -426,6 +494,8 @@ export async function POST(request: NextRequest) {
 
       if (event.type === "membership.activated") {
         await maybeCancelPreviousMembership(metadata, event.data.id);
+      } else if (event.type === "membership.deactivated" && user) {
+        await maybeSendLeadConnectorMembershipEnded(user, event.data);
       }
       break;
     }

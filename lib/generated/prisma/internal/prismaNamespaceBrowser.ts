@@ -103,6 +103,8 @@ export const UserScalarFieldEnum = {
   leadConnectorTrialStartedPaymentId: 'leadConnectorTrialStartedPaymentId',
   leadConnectorPlanPaidAt: 'leadConnectorPlanPaidAt',
   leadConnectorPlanPaidPaymentId: 'leadConnectorPlanPaidPaymentId',
+  leadConnectorMembershipEndedAt: 'leadConnectorMembershipEndedAt',
+  leadConnectorMembershipEndedMembershipId: 'leadConnectorMembershipEndedMembershipId',
   subscriptionPlanKey: 'subscriptionPlanKey',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

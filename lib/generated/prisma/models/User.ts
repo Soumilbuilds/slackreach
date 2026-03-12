@@ -62,6 +62,8 @@ export type UserMinAggregateOutputType = {
   leadConnectorTrialStartedPaymentId: string | null
   leadConnectorPlanPaidAt: Date | null
   leadConnectorPlanPaidPaymentId: string | null
+  leadConnectorMembershipEndedAt: Date | null
+  leadConnectorMembershipEndedMembershipId: string | null
   subscriptionPlanKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -95,6 +97,8 @@ export type UserMaxAggregateOutputType = {
   leadConnectorTrialStartedPaymentId: string | null
   leadConnectorPlanPaidAt: Date | null
   leadConnectorPlanPaidPaymentId: string | null
+  leadConnectorMembershipEndedAt: Date | null
+  leadConnectorMembershipEndedMembershipId: string | null
   subscriptionPlanKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -128,6 +132,8 @@ export type UserCountAggregateOutputType = {
   leadConnectorTrialStartedPaymentId: number
   leadConnectorPlanPaidAt: number
   leadConnectorPlanPaidPaymentId: number
+  leadConnectorMembershipEndedAt: number
+  leadConnectorMembershipEndedMembershipId: number
   subscriptionPlanKey: number
   createdAt: number
   updatedAt: number
@@ -171,6 +177,8 @@ export type UserMinAggregateInputType = {
   leadConnectorTrialStartedPaymentId?: true
   leadConnectorPlanPaidAt?: true
   leadConnectorPlanPaidPaymentId?: true
+  leadConnectorMembershipEndedAt?: true
+  leadConnectorMembershipEndedMembershipId?: true
   subscriptionPlanKey?: true
   createdAt?: true
   updatedAt?: true
@@ -204,6 +212,8 @@ export type UserMaxAggregateInputType = {
   leadConnectorTrialStartedPaymentId?: true
   leadConnectorPlanPaidAt?: true
   leadConnectorPlanPaidPaymentId?: true
+  leadConnectorMembershipEndedAt?: true
+  leadConnectorMembershipEndedMembershipId?: true
   subscriptionPlanKey?: true
   createdAt?: true
   updatedAt?: true
@@ -237,6 +247,8 @@ export type UserCountAggregateInputType = {
   leadConnectorTrialStartedPaymentId?: true
   leadConnectorPlanPaidAt?: true
   leadConnectorPlanPaidPaymentId?: true
+  leadConnectorMembershipEndedAt?: true
+  leadConnectorMembershipEndedMembershipId?: true
   subscriptionPlanKey?: true
   createdAt?: true
   updatedAt?: true
@@ -357,6 +369,8 @@ export type UserGroupByOutputType = {
   leadConnectorTrialStartedPaymentId: string | null
   leadConnectorPlanPaidAt: Date | null
   leadConnectorPlanPaidPaymentId: string | null
+  leadConnectorMembershipEndedAt: Date | null
+  leadConnectorMembershipEndedMembershipId: string | null
   subscriptionPlanKey: string | null
   createdAt: Date
   updatedAt: Date
@@ -413,6 +427,8 @@ export type UserWhereInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.StringNullableFilter<"User"> | string | null
   leadConnectorPlanPaidAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.StringNullableFilter<"User"> | string | null
+  leadConnectorMembershipEndedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.StringNullableFilter<"User"> | string | null
   subscriptionPlanKey?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -450,6 +466,8 @@ export type UserOrderByWithRelationInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   leadConnectorPlanPaidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   leadConnectorPlanPaidPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadConnectorMembershipEndedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadConnectorMembershipEndedMembershipId?: Prisma.SortOrderInput | Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -490,6 +508,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   leadConnectorTrialStartedPaymentId?: Prisma.StringNullableFilter<"User"> | string | null
   leadConnectorPlanPaidAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.StringNullableFilter<"User"> | string | null
+  leadConnectorMembershipEndedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.StringNullableFilter<"User"> | string | null
   subscriptionPlanKey?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -527,6 +547,8 @@ export type UserOrderByWithAggregationInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   leadConnectorPlanPaidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   leadConnectorPlanPaidPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadConnectorMembershipEndedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadConnectorMembershipEndedMembershipId?: Prisma.SortOrderInput | Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -568,6 +590,8 @@ export type UserScalarWhereWithAggregatesInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   leadConnectorPlanPaidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  leadConnectorMembershipEndedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   subscriptionPlanKey?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -600,6 +624,8 @@ export type UserCreateInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -637,6 +663,8 @@ export type UserUncheckedCreateInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -673,6 +701,8 @@ export type UserUpdateInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -710,6 +740,8 @@ export type UserUncheckedUpdateInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -747,6 +779,8 @@ export type UserCreateManyInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -779,6 +813,8 @@ export type UserUpdateManyMutationInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -812,6 +848,8 @@ export type UserUncheckedUpdateManyInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -845,6 +883,8 @@ export type UserCountOrderByAggregateInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.SortOrder
   leadConnectorPlanPaidAt?: Prisma.SortOrder
   leadConnectorPlanPaidPaymentId?: Prisma.SortOrder
+  leadConnectorMembershipEndedAt?: Prisma.SortOrder
+  leadConnectorMembershipEndedMembershipId?: Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -882,6 +922,8 @@ export type UserMaxOrderByAggregateInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.SortOrder
   leadConnectorPlanPaidAt?: Prisma.SortOrder
   leadConnectorPlanPaidPaymentId?: Prisma.SortOrder
+  leadConnectorMembershipEndedAt?: Prisma.SortOrder
+  leadConnectorMembershipEndedMembershipId?: Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -915,6 +957,8 @@ export type UserMinOrderByAggregateInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.SortOrder
   leadConnectorPlanPaidAt?: Prisma.SortOrder
   leadConnectorPlanPaidPaymentId?: Prisma.SortOrder
+  leadConnectorMembershipEndedAt?: Prisma.SortOrder
+  leadConnectorMembershipEndedMembershipId?: Prisma.SortOrder
   subscriptionPlanKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -1040,6 +1084,8 @@ export type UserCreateWithoutAccountsInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1076,6 +1122,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1127,6 +1175,8 @@ export type UserUpdateWithoutAccountsInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1163,6 +1213,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1198,6 +1250,8 @@ export type UserCreateWithoutCampaignsInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1234,6 +1288,8 @@ export type UserUncheckedCreateWithoutCampaignsInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1285,6 +1341,8 @@ export type UserUpdateWithoutCampaignsInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1321,6 +1379,8 @@ export type UserUncheckedUpdateWithoutCampaignsInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1356,6 +1416,8 @@ export type UserCreateWithoutLeadListsInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1392,6 +1454,8 @@ export type UserUncheckedCreateWithoutLeadListsInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1443,6 +1507,8 @@ export type UserUpdateWithoutLeadListsInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1479,6 +1545,8 @@ export type UserUncheckedUpdateWithoutLeadListsInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1514,6 +1582,8 @@ export type UserCreateWithoutContactedLeadsInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1550,6 +1620,8 @@ export type UserUncheckedCreateWithoutContactedLeadsInput = {
   leadConnectorTrialStartedPaymentId?: string | null
   leadConnectorPlanPaidAt?: Date | string | null
   leadConnectorPlanPaidPaymentId?: string | null
+  leadConnectorMembershipEndedAt?: Date | string | null
+  leadConnectorMembershipEndedMembershipId?: string | null
   subscriptionPlanKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1601,6 +1673,8 @@ export type UserUpdateWithoutContactedLeadsInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1637,6 +1711,8 @@ export type UserUncheckedUpdateWithoutContactedLeadsInput = {
   leadConnectorTrialStartedPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   leadConnectorPlanPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leadConnectorPlanPaidPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadConnectorMembershipEndedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadConnectorMembershipEndedMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionPlanKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1731,6 +1807,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   leadConnectorTrialStartedPaymentId?: boolean
   leadConnectorPlanPaidAt?: boolean
   leadConnectorPlanPaidPaymentId?: boolean
+  leadConnectorMembershipEndedAt?: boolean
+  leadConnectorMembershipEndedMembershipId?: boolean
   subscriptionPlanKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1769,6 +1847,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   leadConnectorTrialStartedPaymentId?: boolean
   leadConnectorPlanPaidAt?: boolean
   leadConnectorPlanPaidPaymentId?: boolean
+  leadConnectorMembershipEndedAt?: boolean
+  leadConnectorMembershipEndedMembershipId?: boolean
   subscriptionPlanKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1802,6 +1882,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   leadConnectorTrialStartedPaymentId?: boolean
   leadConnectorPlanPaidAt?: boolean
   leadConnectorPlanPaidPaymentId?: boolean
+  leadConnectorMembershipEndedAt?: boolean
+  leadConnectorMembershipEndedMembershipId?: boolean
   subscriptionPlanKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1835,12 +1917,14 @@ export type UserSelectScalar = {
   leadConnectorTrialStartedPaymentId?: boolean
   leadConnectorPlanPaidAt?: boolean
   leadConnectorPlanPaidPaymentId?: boolean
+  leadConnectorMembershipEndedAt?: boolean
+  leadConnectorMembershipEndedMembershipId?: boolean
   subscriptionPlanKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "stripeCustomerId" | "stripeSubscriptionId" | "stripeSubscriptionStatus" | "stripeTrialEnd" | "stripePriceId" | "stripeProductId" | "whopMemberId" | "whopMembershipId" | "whopMembershipStatus" | "whopRenewalPeriodEnd" | "whopCancelAtPeriodEnd" | "whopPlanId" | "whopProductId" | "whopPaymentMethodId" | "whopLastPaymentId" | "whopLastPaymentStatus" | "whopLastPaymentSubstatus" | "whopLastInvoiceId" | "whopLastInvoiceStatus" | "whopLastInvoiceToken" | "leadConnectorTrialStartedAt" | "leadConnectorTrialStartedPaymentId" | "leadConnectorPlanPaidAt" | "leadConnectorPlanPaidPaymentId" | "subscriptionPlanKey" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "stripeCustomerId" | "stripeSubscriptionId" | "stripeSubscriptionStatus" | "stripeTrialEnd" | "stripePriceId" | "stripeProductId" | "whopMemberId" | "whopMembershipId" | "whopMembershipStatus" | "whopRenewalPeriodEnd" | "whopCancelAtPeriodEnd" | "whopPlanId" | "whopProductId" | "whopPaymentMethodId" | "whopLastPaymentId" | "whopLastPaymentStatus" | "whopLastPaymentSubstatus" | "whopLastInvoiceId" | "whopLastInvoiceStatus" | "whopLastInvoiceToken" | "leadConnectorTrialStartedAt" | "leadConnectorTrialStartedPaymentId" | "leadConnectorPlanPaidAt" | "leadConnectorPlanPaidPaymentId" | "leadConnectorMembershipEndedAt" | "leadConnectorMembershipEndedMembershipId" | "subscriptionPlanKey" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   campaigns?: boolean | Prisma.User$campaignsArgs<ExtArgs>
@@ -1887,6 +1971,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     leadConnectorTrialStartedPaymentId: string | null
     leadConnectorPlanPaidAt: Date | null
     leadConnectorPlanPaidPaymentId: string | null
+    leadConnectorMembershipEndedAt: Date | null
+    leadConnectorMembershipEndedMembershipId: string | null
     subscriptionPlanKey: string | null
     createdAt: Date
     updatedAt: Date
@@ -2344,6 +2430,8 @@ export interface UserFieldRefs {
   readonly leadConnectorTrialStartedPaymentId: Prisma.FieldRef<"User", 'String'>
   readonly leadConnectorPlanPaidAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly leadConnectorPlanPaidPaymentId: Prisma.FieldRef<"User", 'String'>
+  readonly leadConnectorMembershipEndedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly leadConnectorMembershipEndedMembershipId: Prisma.FieldRef<"User", 'String'>
   readonly subscriptionPlanKey: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>

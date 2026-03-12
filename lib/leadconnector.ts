@@ -2,6 +2,8 @@ const LEADCONNECTOR_TRIAL_STARTED_WEBHOOK_URL =
   "https://services.leadconnectorhq.com/hooks/AhJ390JaEZDtO4nvBryb/webhook-trigger/05906caa-e1fc-4202-b44e-68259429b089";
 const LEADCONNECTOR_PLAN_PAID_WEBHOOK_URL =
   "https://services.leadconnectorhq.com/hooks/AhJ390JaEZDtO4nvBryb/webhook-trigger/b6173e69-dc0e-4401-948e-e6926d40cd0e";
+const LEADCONNECTOR_MEMBERSHIP_ENDED_WEBHOOK_URL =
+  "https://services.leadconnectorhq.com/hooks/AhJ390JaEZDtO4nvBryb/webhook-trigger/cb5587e4-cb94-40f9-a1cb-0ecd194577f6";
 
 const sendLeadConnectorWebhook = async (
   url: string,
@@ -34,3 +36,14 @@ export const sendLeadConnectorPlanPaidWebhook = async (payload: {
   email: string;
   plan: "starter" | "growth" | "unlimited";
 }) => sendLeadConnectorWebhook(LEADCONNECTOR_PLAN_PAID_WEBHOOK_URL, payload);
+
+export const sendLeadConnectorMembershipEndedWebhook = async (payload: {
+  email: string;
+  plan?: "starter" | "growth" | "unlimited";
+  status: "canceled" | "expired";
+}) =>
+  sendLeadConnectorWebhook(LEADCONNECTOR_MEMBERSHIP_ENDED_WEBHOOK_URL, {
+    email: payload.email,
+    status: payload.status,
+    ...(payload.plan ? { plan: payload.plan } : {}),
+  });

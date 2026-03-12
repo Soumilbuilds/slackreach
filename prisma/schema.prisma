@@ -35,6 +35,8 @@ model User {
   leadConnectorTrialStartedPaymentId String?
   leadConnectorPlanPaidAt            DateTime?
   leadConnectorPlanPaidPaymentId     String?
+  leadConnectorMembershipEndedAt     DateTime?
+  leadConnectorMembershipEndedMembershipId String?
   subscriptionPlanKey      String?
   createdAt                DateTime         @default(now())
   updatedAt                DateTime         @updatedAt

@@ -2,6 +2,7 @@ import prisma from "@/lib/db";
 import { type AuthenticatedUser } from "@/lib/auth";
 import type { Invoice, Membership, Payment } from "@whop/sdk/resources/shared";
 import {
+  sendLeadConnectorMembershipEndedWebhook,
   sendLeadConnectorPlanPaidWebhook,
   sendLeadConnectorTrialStartedWebhook,
 } from "@/lib/leadconnector";
@@ -337,6 +338,48 @@ const maybeBackfillLeadConnectorPlanPaid = async (
   });
 };
 
+const maybeBackfillLeadConnectorMembershipEnded = async (
+  user: AuthenticatedUser,
+  membership: Membership | null,
+  planKey: PlanKey | null
+): Promise<void> => {
+  const endedStatus =
+    membership?.status === "canceled"
+      ? "canceled"
+      : membership?.status === "expired"
+        ? "expired"
+        : null;
+
+  if (!membership || !endedStatus) {
+    return;
+  }
+
+  if (user.leadConnectorMembershipEndedMembershipId === membership.id) {
+    return;
+  }
+
+  const email = membership.user?.email ?? user.email;
+  if (!email) {
+    return;
+  }
+
+  await sendLeadConnectorMembershipEndedWebhook({
+    email,
+    status: endedStatus,
+    ...(planKey === "starter" || planKey === "growth" || planKey === "unlimited"
+      ? { plan: planKey }
+      : {}),
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      leadConnectorMembershipEndedAt: new Date(),
+      leadConnectorMembershipEndedMembershipId: membership.id,
+    },
+  });
+};
+
 export const syncUserBillingState = async (
   user: AuthenticatedUser
 ): Promise<BillingSyncResult> => {
@@ -415,6 +458,11 @@ export const syncUserBillingState = async (
 
   await maybeBackfillLeadConnectorTrialStarted(user, payment, planDetails.planKey);
   await maybeBackfillLeadConnectorPlanPaid(user, payment, planDetails.planKey);
+  await maybeBackfillLeadConnectorMembershipEnded(
+    user,
+    membership,
+    planDetails.planKey
+  );
 
   return {
     memberId,
