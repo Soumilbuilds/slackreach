@@ -16,15 +16,17 @@ type BillingStatus = {
 };
 
 const formatStatus = (status: string | null, cancelAtPeriodEnd: boolean): string => {
-  if (!status) {
-    return "No active membership";
-  }
-
-  if (cancelAtPeriodEnd && status === "canceling") {
-    return "Active until period ends";
-  }
-
+  if (!status) return "No active subscription";
+  if (cancelAtPeriodEnd && status === "canceling") return "Active until period ends";
   return status.replaceAll("_", " ");
+};
+
+const statusColor = (status: string | null): string => {
+  if (!status) return "#9ca3af";
+  if (["active", "trialing"].includes(status)) return "#059669";
+  if (["canceling"].includes(status)) return "#d97706";
+  if (["past_due", "unresolved"].includes(status)) return "#dc2626";
+  return "#374151";
 };
 
 export default function SettingsPage() {
@@ -79,70 +81,193 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight text-gray-900 mb-3">
+        <h2 className="text-2xl font-semibold tracking-tight text-gray-900 mb-1">
           Settings
         </h2>
-        <p className="text-sm text-gray-400">Loading settings...</p>
+        <p className="text-sm text-gray-400">Loading...</p>
       </div>
     );
   }
 
+  const billingStatusText = formatStatus(
+    billing?.membershipStatus ?? null,
+    billing?.cancelAtPeriodEnd ?? false
+  );
+
+  const billingColorValue = statusColor(billing?.membershipStatus ?? null);
+
+  const needsResolve =
+    billing?.membershipStatus &&
+    !["active", "trialing", "canceling"].includes(billing.membershipStatus);
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
-          Settings
-        </h2>
-      </div>
-
-      <div className="max-w-2xl rounded-lg border border-gray-200 bg-white divide-y divide-gray-100">
-        <div className="flex items-center justify-between px-5 py-4">
-          <span className="text-sm text-gray-500">Email</span>
-          <span className="text-sm font-medium text-gray-900">{user?.email ?? "—"}</span>
+      <div
+        style={{
+          marginBottom: "32px",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: "16px",
+        }}
+      >
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
+            Settings
+          </h2>
+          <p style={{ marginTop: "4px", fontSize: "14px", color: "#6b7280" }}>
+            Manage your account and subscription.
+          </p>
         </div>
 
-        <div className="flex items-center justify-between px-5 py-4">
-          <span className="text-sm text-gray-500">Plan</span>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-900">
-              {user?.planName ?? "No active plan"}
-            </span>
-            <Link
-              href="/plans"
-              className="px-3 py-1 text-xs font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-            >
-              Change
-            </Link>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between px-5 py-4">
-          <span className="text-sm text-gray-500">Billing</span>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-900 capitalize">
-              {formatStatus(billing?.membershipStatus ?? null, billing?.cancelAtPeriodEnd ?? false)}
-            </span>
-            {billing?.membershipStatus &&
-              !["active", "trialing", "canceling"].includes(billing.membershipStatus) && (
-                <Link
-                  href="/billing/blocked"
-                  className="px-3 py-1 text-xs font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition-colors"
-                >
-                  Resolve
-                </Link>
-              )}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8">
-        <button
-          onClick={handleSignOut}
-          disabled={signingOut}
-          className="text-sm text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+        <a
+          href="https://slackreach.com/review"
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "9999px",
+            backgroundColor: "#111827",
+            padding: "10px 14px",
+            fontSize: "12px",
+            fontWeight: 600,
+            color: "#ffffff",
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+            boxShadow: "0 1px 2px rgba(17, 24, 39, 0.12)",
+          }}
         >
-          {signingOut ? "Signing out..." : "Sign out"}
-        </button>
+          Free $195 Coupon
+        </a>
+      </div>
+
+      <div style={{ maxWidth: "672px", display: "flex", flexDirection: "column", gap: "24px" }}>
+        {/* Account section */}
+        <div>
+          <h3 style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: "#9ca3af", marginBottom: "12px" }}>
+            Account
+          </h3>
+          <div style={{ borderRadius: "12px", border: "1px solid #e5e7eb", backgroundColor: "#ffffff", overflow: "hidden" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "9999px",
+                  backgroundColor: "#f3f4f6",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  color: "#4b5563",
+                  textTransform: "uppercase",
+                }}>
+                  {user?.email?.charAt(0) ?? "?"}
+                </div>
+                <div>
+                  <p style={{ fontSize: "14px", fontWeight: 500, color: "#111827", margin: 0 }}>
+                    {user?.email ?? "—"}
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#9ca3af", margin: 0 }}>
+                    Email address
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Subscription section */}
+        <div>
+          <h3 style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: "#9ca3af", marginBottom: "12px" }}>
+            Subscription
+          </h3>
+          <div style={{ borderRadius: "12px", border: "1px solid #e5e7eb", backgroundColor: "#ffffff", overflow: "hidden" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #f3f4f6" }}>
+              <p style={{ fontSize: "14px", color: "#6b7280", margin: 0 }}>Current plan</p>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ fontSize: "14px", fontWeight: 500, color: "#111827" }}>
+                  {user?.planName ?? "No active plan"}
+                </span>
+                <Link
+                  href="/plans"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                    backgroundColor: "#ffffff",
+                    padding: "6px 12px",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    color: "#374151",
+                    textDecoration: "none",
+                    transition: "all 150ms",
+                  }}
+                >
+                  Change
+                </Link>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px" }}>
+              <p style={{ fontSize: "14px", color: "#6b7280", margin: 0 }}>Billing status</p>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ fontSize: "14px", fontWeight: 500, color: billingColorValue, textTransform: "capitalize" }}>
+                  {billingStatusText}
+                </span>
+                {needsResolve && (
+                  <Link
+                    href="/billing/blocked"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      borderRadius: "8px",
+                      backgroundColor: "#111827",
+                      padding: "6px 12px",
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      color: "#ffffff",
+                      textDecoration: "none",
+                      transition: "all 150ms",
+                    }}
+                  >
+                    Resolve
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sign out */}
+        <div style={{ paddingTop: "16px", borderTop: "1px solid #f3f4f6" }}>
+          <button
+            onClick={handleSignOut}
+            disabled={signingOut}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              fontSize: "14px",
+              color: "#9ca3af",
+              backgroundColor: "transparent",
+              border: "none",
+              cursor: signingOut ? "not-allowed" : "pointer",
+              opacity: signingOut ? 0.5 : 1,
+              padding: 0,
+              transition: "color 150ms",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "#dc2626"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "#9ca3af"; }}
+          >
+            {signingOut ? "Signing out..." : "Sign out"}
+          </button>
+        </div>
       </div>
     </div>
   );
