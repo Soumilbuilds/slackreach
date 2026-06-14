@@ -384,6 +384,29 @@ export async function processCampaignNow(
       return { claimed: false as const, candidate: null };
     }
 
+    // Permanent deduplication: check if this user was ever contacted by this user
+    // in any previous campaign.  If so, skip to avoid duplicate DMs.
+    const alreadyContacted = await tx.contactedLead.findUnique({
+      where: {
+        userId_slackUserId: {
+          userId: campaign.userId,
+          slackUserId: candidate.lead.slackUserId,
+        },
+      },
+      select: { id: true },
+    });
+
+    if (alreadyContacted) {
+      await tx.campaignLead.update({
+        where: { id: candidate.id },
+        data: {
+          status: "skipped",
+          errorMessage: "Lead already contacted in a previous campaign.",
+        },
+      });
+      return { claimed: false as const, candidate };
+    }
+
     // Cross-campaign dedup within THIS campaign only.  Different campaigns
     // can target the same slackUserId with different products/messages.
     const alreadyHandled = await tx.campaignLead.findFirst({
@@ -574,6 +597,22 @@ export async function processCampaignNow(
           lastSentAt: now,
           nextSendAt,
           sendError: null,
+        },
+      }),
+      // Permanent record so future campaigns (and republishes) skip this lead.
+      prisma.contactedLead.upsert({
+        where: {
+          userId_slackUserId: {
+            userId: campaign.userId,
+            slackUserId: pendingLeadEntry.lead.slackUserId,
+          },
+        },
+        create: {
+          userId: campaign.userId,
+          slackUserId: pendingLeadEntry.lead.slackUserId,
+        },
+        update: {
+          contactedAt: now,
         },
       }),
     ]);
